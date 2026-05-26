@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Nexus Optimizer</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Exo+2:wght@300;400;500;600&display=swap');
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{--bg:#08060f;--bg2:#0e0b1a;--bg3:#130f22;--p:#7c3aed;--pl:#a855f7;--pd:#4c1d95;--text:#e2d9f3;--muted:#8b7aa8;--border:rgba(124,58,237,0.22);--borderb:rgba(168,85,247,0.45);--green:#4ade80;--amber:#fbbf24;--red:#f87171;}
+body{background:var(--bg);font-family:'Exo 2',sans-serif;color:var(--text);overflow:hidden;user-select:none;}
+.bg-grid{position:fixed;inset:0;background-image:linear-gradient(rgba(124,58,237,0.04)1px,transparent 1px),linear-gradient(90deg,rgba(124,58,237,0.04)1px,transparent 1px);background-size:40px 40px;pointer-events:none;}
+.bg-orb{position:fixed;width:700px;height:500px;border-radius:50%;background:radial-gradient(ellipse,rgba(124,58,237,0.08)0%,transparent 70%);top:-150px;left:50%;transform:translateX(-50%);pointer-events:none;animation:orb-pulse 6s ease-in-out infinite;}
+.bg-orb2{position:fixed;width:400px;height:400px;border-radius:50%;background:radial-gradient(ellipse,rgba(168,85,247,0.05)0%,transparent 70%);bottom:-100px;right:-100px;pointer-events:none;animation:orb-pulse 8s ease-in-out infinite reverse;}
+@keyframes orb-pulse{0%,100%{opacity:0.6;}50%{opacity:1;}}
+#titlebar{display:flex;align-items:center;justify-content:space-between;padding:0 20px;height:44px;background:rgba(8,6,15,0.98);border-bottom:1px solid var(--border);-webkit-app-region:drag;position:relative;z-index:10;}
+.tb-logo{font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:700;letter-spacing:4px;color:#fff;display:flex;align-items:center;gap:8px;}
+.tb-logo span{color:var(--pl);}
+.tb-version{font-size:10px;letter-spacing:2px;color:var(--muted);font-family:'Exo 2';margin-left:4px;}
+.tb-user{font-size:12px;color:var(--pl);letter-spacing:1px;font-family:'Rajdhani';font-weight:600;}
+.tb-controls{display:flex;gap:6px;-webkit-app-region:no-drag;align-items:center;}
+.tb-btn{width:30px;height:30px;border-radius:8px;border:1px solid var(--border);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .2s;}
+.tb-btn:hover{background:rgba(124,58,237,0.2);border-color:var(--borderb);}
+.tb-btn svg{width:13px;height:13px;stroke:var(--muted);fill:none;stroke-width:2;stroke-linecap:round;}
+.tb-btn.close:hover{background:rgba(239,68,68,0.15);border-color:rgba(239,68,68,0.4);}
+.tb-btn.close:hover svg{stroke:var(--red);}
+.auth-screen{display:none;flex-direction:column;align-items:center;justify-content:center;min-height:calc(100vh - 44px);padding:2rem;position:relative;z-index:1;}
+.auth-screen.active{display:flex;}
+#dash{display:none;flex-direction:row;height:calc(100vh - 44px);}
+.logo-wrap{text-align:center;margin-bottom:.75rem;}
+.logo-hex{width:60px;height:60px;margin:0 auto .6rem;display:flex;align-items:center;justify-content:center;animation:logo-glow 4s ease-in-out infinite;}
+@keyframes logo-glow{0%,100%{filter:drop-shadow(0 0 8px rgba(168,85,247,0.4));}50%{filter:drop-shadow(0 0 22px rgba(168,85,247,0.8));}}
+.logo-hex svg{width:60px;height:60px;}
+.logo-title{font-family:'Rajdhani',sans-serif;font-size:26px;font-weight:700;letter-spacing:5px;color:#fff;}
+.logo-title span{color:var(--pl);}
+.logo-sub{font-size:11px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-top:4px;}
+.auth-card{background:rgba(14,11,26,0.95);border:1px solid var(--border);border-radius:20px;padding:1.25rem;width:100%;max-width:420px;backdrop-filter:blur(10px);}
+.auth-title{font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:#fff;margin-bottom:.9rem;text-align:center;}
+.form-group{margin-bottom:.6rem;}
+.form-label{display:block;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:7px;}
+.form-input{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:9px 13px;font-family:'Exo 2',sans-serif;font-size:13px;color:var(--text);outline:none;transition:all .2s;}
+.form-input:focus{border-color:var(--pl);box-shadow:0 0 0 3px rgba(124,58,237,0.1);}
+.form-input::placeholder{color:var(--muted);}
+.btn-auth{width:100%;background:linear-gradient(135deg,#5b21b6,var(--p));border:none;border-radius:12px;padding:11px;font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:700;letter-spacing:3px;color:#fff;cursor:pointer;transition:all .25s;margin-top:.4rem;}
+.btn-auth:hover{box-shadow:0 6px 28px rgba(124,58,237,0.45);transform:translateY(-1px);}
+.btn-auth:disabled{opacity:.5;cursor:default;transform:none;}
+.btn-secondary{width:100%;background:transparent;border:1px solid var(--border);border-radius:12px;padding:10px;font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:600;letter-spacing:2px;color:var(--muted);cursor:pointer;transition:all .2s;margin-top:.4rem;}
+.btn-secondary:hover{border-color:var(--pl);color:var(--text);}
+.err-box{background:rgba(220,38,38,0.08);border:1px solid rgba(220,38,38,0.25);border-radius:10px;padding:10px 14px;font-size:12px;color:var(--red);margin-bottom:.8rem;display:none;}
+.success-box{background:rgba(74,222,128,0.08);border:1px solid rgba(74,222,128,0.25);border-radius:10px;padding:10px 14px;font-size:12px;color:var(--green);margin-bottom:.8rem;display:none;}
+.hwid-box{background:var(--bg3);border:1px solid rgba(124,58,237,0.15);border-radius:10px;padding:8px 12px;margin-bottom:.6rem;display:flex;align-items:center;gap:8px;}
+.hwid-label{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:3px;}
+.hwid-val{font-family:'Rajdhani',sans-serif;font-size:11px;color:var(--pl);letter-spacing:1px;}
+.auth-link{text-align:center;font-size:12px;color:var(--muted);margin-top:.8rem;}
+.auth-link a{color:var(--pl);text-decoration:none;cursor:pointer;font-weight:500;}
+.divider{display:flex;align-items:center;gap:10px;margin:.8rem 0;color:var(--muted);font-size:11px;}
+.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border);}
+.sidebar{width:215px;background:rgba(14,11,26,0.98);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:1rem 0;flex-shrink:0;overflow-y:auto;}
+.sb-section{padding:0 10px;margin-bottom:.75rem;}
+.sb-title{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(139,122,168,0.6);padding:0 10px;margin-bottom:6px;}
+.sb-btn{display:flex;align-items:center;gap:10px;width:100%;background:transparent;border:none;border-radius:10px;padding:9px 10px;font-family:'Exo 2',sans-serif;font-size:12px;color:var(--muted);cursor:pointer;transition:all .15s;text-align:left;position:relative;}
+.sb-btn:hover{background:rgba(124,58,237,0.1);color:var(--text);}
+.sb-btn.active{background:rgba(124,58,237,0.15);color:#fff;}
+.sb-btn.active::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:3px;height:18px;background:var(--pl);border-radius:0 2px 2px 0;}
+.sb-icon{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;background:rgba(124,58,237,0.08);flex-shrink:0;font-size:14px;}
+.sb-btn.active .sb-icon{background:rgba(124,58,237,0.2);}
+.sb-foot{margin-top:auto;padding:0 10px;border-top:1px solid var(--border);padding-top:10px;}
+.version-badge{font-size:10px;color:var(--muted);padding:6px 10px;display:flex;align-items:center;justify-content:space-between;}
+.version-dot{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);animation:pulse-dot 2s infinite;}
+@keyframes pulse-dot{0%,100%{opacity:1;}50%{opacity:0.4;}}
+.main{flex:1;overflow-y:auto;padding:18px;scrollbar-width:thin;scrollbar-color:var(--pd) transparent;}
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px;}
+.stat-card{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:12px 14px;transition:border-color .2s;}
+.stat-card:hover{border-color:rgba(124,58,237,0.4);}
+.stat-lbl{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:5px;}
+.stat-val{font-family:'Rajdhani',sans-serif;font-size:26px;font-weight:700;color:#fff;transition:all .3s;}
+.stat-val.green{color:var(--green);}
+.stat-val.purple{color:var(--pl);}
+.stat-val.amber{color:var(--amber);}
+.stat-val.red{color:var(--red);}
+.panel{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:16px;margin-bottom:12px;}
+.panel-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.panel-title{font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:#fff;}
+.badge{font-size:9px;letter-spacing:1px;text-transform:uppercase;padding:3px 10px;border-radius:20px;background:rgba(124,58,237,0.15);color:var(--pl);border:1px solid rgba(124,58,237,0.25);}
+.badge.green{background:rgba(74,222,128,0.1);color:var(--green);border-color:rgba(74,222,128,0.2);}
+.badge.amber{background:rgba(251,191,36,0.1);color:var(--amber);border-color:rgba(251,191,36,0.2);}
+.badge.red{background:rgba(239,68,68,0.1);color:var(--red);border-color:rgba(239,68,68,0.2);}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
+.opt-item{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(124,58,237,0.07);}
+.opt-item:last-child{border-bottom:none;}
+.opt-name{font-size:12px;font-weight:500;color:var(--text);margin-bottom:2px;}
+.opt-desc{font-size:10px;color:var(--muted);}
+.toggle{width:42px;height:22px;background:var(--bg3);border:1px solid rgba(124,58,237,0.2);border-radius:11px;cursor:pointer;position:relative;transition:all .25s;flex-shrink:0;margin-left:12px;}
+.toggle.on{background:var(--p);border-color:var(--pl);box-shadow:0 0 8px rgba(124,58,237,0.3);}
+.toggle::after{content:'';position:absolute;width:16px;height:16px;border-radius:50%;background:#6b7280;top:2px;left:2px;transition:all .25s;}
+.toggle.on::after{left:22px;background:#fff;}
+.boost-btn{width:100%;margin-top:12px;background:linear-gradient(135deg,#5b21b6,var(--p));border:none;border-radius:12px;padding:13px;font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:700;letter-spacing:3px;color:#fff;cursor:pointer;transition:all .25s;}
+.boost-btn:hover{box-shadow:0 8px 28px rgba(124,58,237,0.5);transform:translateY(-2px);}
+.boost-btn:disabled{opacity:.5;cursor:default;transform:none;}
+.boost-btn.running{background:linear-gradient(135deg,#14532d,#15803d);}
+.bar-wrap{margin-bottom:10px;}
+.bar-head{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:5px;}
+.bar-head span:last-child{color:var(--text);font-weight:500;}
+.bar-track{height:5px;background:var(--bg3);border-radius:3px;overflow:hidden;}
+.bar-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,#6d28d9,var(--pl));transition:width .8s ease;}
+.bar-fill.green{background:linear-gradient(90deg,#166534,#22c55e);}
+.bar-fill.amber{background:linear-gradient(90deg,#78350f,#f59e0b);}
+.bar-fill.red{background:linear-gradient(90deg,#7f1d1d,#ef4444);}
+.proc-item{display:flex;align-items:center;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(124,58,237,0.06);}
+.proc-item:last-child{border-bottom:none;}
+.proc-name{color:var(--text);font-weight:500;font-family:'Rajdhani',sans-serif;font-size:13px;}
+.proc-mem{color:var(--muted);min-width:60px;text-align:right;}
+.proc-kill{background:transparent;border:1px solid rgba(220,38,38,0.25);border-radius:6px;padding:3px 10px;font-size:10px;color:var(--red);cursor:pointer;transition:all .15s;margin-left:10px;}
+.proc-kill:hover{background:rgba(220,38,38,0.1);}
+.proc-kill:disabled{opacity:.3;cursor:default;}
+.admin-warn{background:rgba(251,191,36,0.06);border:1px solid rgba(251,191,36,0.2);border-radius:10px;padding:10px 14px;font-size:12px;color:var(--amber);margin-bottom:12px;display:none;}
+.games-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.game-card{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:14px;transition:all .2s;position:relative;}
+.game-card:hover{border-color:rgba(168,85,247,0.4);transform:translateY(-2px);}
+.game-card.active-game{border-color:var(--green);}
+.game-card.applied{border-color:var(--pl);}
+.game-icon{font-size:26px;margin-bottom:7px;}
+.game-name{font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:600;color:#fff;margin-bottom:3px;}
+.game-desc{font-size:10px;color:var(--muted);margin-bottom:8px;line-height:1.4;}
+.game-tweaks{display:flex;flex-wrap:wrap;gap:3px;margin-bottom:8px;}
+.game-tweak{font-size:9px;padding:1px 6px;border-radius:8px;background:rgba(124,58,237,0.12);color:var(--pl);border:1px solid rgba(124,58,237,0.2);}
+.game-apply-btn{width:100%;background:linear-gradient(135deg,#5b21b6,var(--p));border:none;border-radius:8px;padding:8px;font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:600;letter-spacing:2px;color:#fff;cursor:pointer;transition:all .2s;}
+.game-apply-btn.done{background:linear-gradient(135deg,#14532d,#15803d);}
+.detected-badge{position:absolute;top:10px;right:10px;font-size:9px;padding:2px 6px;border-radius:8px;background:rgba(74,222,128,0.12);color:var(--green);border:1px solid rgba(74,222,128,0.25);display:none;}
+.action-card{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:16px;text-align:center;transition:all .2s;}
+.action-card:hover{border-color:rgba(168,85,247,0.3);transform:translateY(-1px);}
+.action-icon{font-size:32px;margin-bottom:10px;display:block;}
+.action-title{font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;letter-spacing:2px;color:#fff;margin-bottom:5px;}
+.action-desc{font-size:11px;color:var(--muted);margin-bottom:12px;line-height:1.5;}
+.action-result{font-size:11px;color:var(--green);margin-bottom:8px;min-height:14px;}
+.action-btn{width:100%;background:linear-gradient(135deg,#5b21b6,var(--p));border:none;border-radius:8px;padding:10px;font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:700;letter-spacing:2px;color:#fff;cursor:pointer;transition:all .2s;}
+.action-btn:hover{box-shadow:0 4px 18px rgba(124,58,237,0.4);}
+.action-btn:disabled{opacity:.5;cursor:default;}
+.action-btn.done{background:linear-gradient(135deg,#14532d,#15803d);}
+.gpu-info{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:12px 16px;margin-bottom:12px;display:flex;align-items:center;gap:12px;}
+.gpu-name-text{font-family:'Rajdhani',sans-serif;font-size:14px;color:#fff;font-weight:600;}
+.gpu-type-badge{display:inline-block;font-size:10px;letter-spacing:2px;padding:2px 8px;border-radius:8px;margin-top:3px;}
+.gpu-type-badge.nvidia{background:rgba(118,185,0,0.12);color:#76b900;border:1px solid rgba(118,185,0,0.25);}
+.gpu-type-badge.amd{background:rgba(237,28,36,0.12);color:#ed1c24;border:1px solid rgba(237,28,36,0.25);}
+.gpu-type-badge.intel{background:rgba(0,113,197,0.12);color:#0071c5;border:1px solid rgba(0,113,197,0.25);}
+.gpu-type-badge.unknown{background:rgba(139,122,168,0.12);color:var(--muted);border:1px solid var(--border);}
+.net-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px;}
+.net-stat{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center;}
+.net-stat-val{font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--pl);}
+.net-stat-lbl{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-top:3px;}
+/* ── Checkup ── */
+.checkup-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:14px;}
+.checkup-card{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:14px;cursor:pointer;transition:all .2s;position:relative;}
+.checkup-card:hover{border-color:rgba(168,85,247,0.4);}
+.checkup-card.selected{border-color:var(--pl);background:rgba(124,58,237,0.08);}
+.checkup-card.done{border-color:var(--green);}
+.checkup-icon{font-size:26px;margin-bottom:8px;}
+.checkup-name{font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:600;color:#fff;margin-bottom:4px;}
+.checkup-desc{font-size:10px;color:var(--muted);line-height:1.5;}
+.checkup-check{position:absolute;top:10px;right:10px;width:18px;height:18px;border-radius:5px;border:2px solid var(--border);background:transparent;transition:all .2s;}
+.checkup-card.selected .checkup-check{background:var(--p);border-color:var(--pl);}
+.checkup-card.selected .checkup-check::after{content:'✓';position:absolute;top:-2px;left:2px;font-size:12px;color:#fff;}
+.auto-clean-box{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:14px;display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;}
+.auto-clean-info{flex:1;}
+.auto-clean-title{font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:600;color:#fff;margin-bottom:4px;}
+.auto-clean-desc{font-size:11px;color:var(--muted);}
+.interval-select{background:var(--bg2);border:1px solid var(--border);border-radius:8px;padding:6px 10px;font-family:'Exo 2',sans-serif;font-size:12px;color:var(--text);outline:none;margin-right:8px;}
+/* ── Overclocking ── */
+.warning-box{background:rgba(251,191,36,0.08);border:1px solid rgba(251,191,36,0.3);border-radius:12px;padding:14px;margin-bottom:14px;}
+.warning-title{font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;color:var(--amber);margin-bottom:8px;}
+.warning-text{font-size:11px;color:var(--muted);line-height:1.6;}
+.oc-presets{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:14px;}
+.oc-card{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:16px;text-align:center;transition:all .2s;cursor:pointer;}
+.oc-card:hover{border-color:rgba(168,85,247,0.4);transform:translateY(-2px);}
+.oc-card.selected{border-color:var(--pl);background:rgba(124,58,237,0.1);}
+.oc-name{font-family:'Rajdhani',sans-serif;font-size:16px;font-weight:700;color:#fff;margin-bottom:6px;}
+.oc-desc{font-size:11px;color:var(--muted);margin-bottom:12px;line-height:1.5;}
+.oc-power{font-size:11px;color:var(--pl);margin-bottom:8px;}
+.oc-apply-btn{width:100%;background:linear-gradient(135deg,#5b21b6,var(--p));border:none;border-radius:8px;padding:9px;font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:700;letter-spacing:2px;color:#fff;cursor:pointer;transition:all .2s;}
+.oc-apply-btn:hover{box-shadow:0 4px 18px rgba(124,58,237,0.4);}
+.oc-apply-btn.done{background:linear-gradient(135deg,#14532d,#15803d);}
+.oc-gpu-info{background:var(--bg3);border:1px solid var(--border);border-radius:10px;padding:12px 16px;margin-bottom:12px;display:flex;align-items:center;justify-content:space-between;}
+.oc-stats{display:flex;gap:20px;}
+.oc-stat{text-align:center;}
+.oc-stat-val{font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;color:var(--pl);}
+.oc-stat-lbl{font-size:9px;letter-spacing:1px;color:var(--muted);}
+.confirm-modal{position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:200;display:none;align-items:center;justify-content:center;}
+.confirm-modal.show{display:flex;}
+.confirm-box{background:var(--bg2);border:1px solid var(--borderb);border-radius:16px;padding:24px;max-width:400px;width:90%;}
+.confirm-title{font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:700;color:var(--amber);margin-bottom:12px;}
+.confirm-text{font-size:12px;color:var(--muted);line-height:1.7;margin-bottom:20px;white-space:pre-line;}
+.confirm-btns{display:flex;gap:10px;}
+.confirm-btn-ok{flex:1;background:linear-gradient(135deg,#92400e,#d97706);border:none;border-radius:10px;padding:11px;font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;letter-spacing:2px;color:#fff;cursor:pointer;}
+.confirm-btn-cancel{flex:1;background:transparent;border:1px solid var(--border);border-radius:10px;padding:11px;font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:600;letter-spacing:1px;color:var(--muted);cursor:pointer;}
+.toast{position:fixed;bottom:24px;right:24px;background:rgba(14,11,26,0.95);border:1px solid var(--borderb);border-radius:12px;padding:12px 18px;font-size:13px;color:var(--text);z-index:100;transform:translateY(20px);opacity:0;transition:all .3s;pointer-events:none;display:flex;align-items:center;gap:8px;}
+.toast.show{transform:translateY(0);opacity:1;}
+.toast.success{border-color:rgba(74,222,128,0.35);color:var(--green);}
+.toast.error{border-color:rgba(239,68,68,0.35);color:var(--red);}
+</style>
+</head>
+<body>
+<div class="bg-grid"></div>
+<div class="bg-orb"></div>
+<div class="bg-orb2"></div>
+
+<div id="titlebar">
+  <div class="tb-logo">
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="none"><polygon points="10,1 18,5 18,15 10,19 2,15 2,5" stroke="#a855f7" stroke-width="1.5" fill="rgba(76,29,149,0.3)"/><circle cx="10" cy="10" r="3" fill="#a855f7"/></svg>
+    NEX<span>US</span><span class="tb-version">v1.6</span>
+  </div>
+  <div class="tb-controls">
+    <span class="tb-user" id="tb-username" style="display:none"></span>
+    <button class="tb-btn" onclick="window.pywebview.api.minimize_window()"><svg viewBox="0 0 14 14"><line x1="2" y1="7" x2="12" y2="7"/></svg></button>
+    <button class="tb-btn close" onclick="window.pywebview.api.close_window()"><svg viewBox="0 0 14 14"><line x1="2" y1="2" x2="12" y2="12"/><line x1="12" y1="2" x2="2" y2="12"/></svg></button>
+  </div>
+</div>
+
+<!-- LOGIN -->
+<div id="screen-login" class="auth-screen active">
+  <div class="logo-wrap">
+    <div class="logo-hex"><svg viewBox="0 0 80 80" fill="none"><polygon points="40,4 72,22 72,58 40,76 8,58 8,22" stroke="#a855f7" stroke-width="1.5" fill="rgba(76,29,149,0.18)"/><circle cx="40" cy="40" r="8" fill="#7c3aed"/><circle cx="40" cy="40" r="4" fill="#a855f7"/></svg></div>
+    <div class="logo-title">NEX<span>US</span></div>
+    <div class="logo-sub">Gaming Optimizer Pro</div>
+  </div>
+  <div class="auth-card">
+    <div class="auth-title">CONNEXION</div>
+    <div class="err-box" id="login-err"></div>
+    <div class="form-group"><label class="form-label">Pseudo</label><input class="form-input" id="login-user" type="text" placeholder="Ton pseudo" autocomplete="off"/></div>
+    <div class="form-group"><label class="form-label">Mot de passe</label><input class="form-input" id="login-pass" type="password" placeholder="••••••••"/></div>
+    <button class="btn-auth" id="login-btn" onclick="doLogin()">SE CONNECTER</button>
+    <div class="divider">ou</div>
+    <button class="btn-secondary" onclick="showScreen('screen-register')">Première fois ? Activer une licence →</button>
+  </div>
+</div>
+
+<!-- INSCRIPTION -->
+<div id="screen-register" class="auth-screen">
+  <div class="logo-wrap">
+    <div class="logo-hex"><svg viewBox="0 0 80 80" fill="none"><polygon points="40,4 72,22 72,58 40,76 8,58 8,22" stroke="#a855f7" stroke-width="1.5" fill="rgba(76,29,149,0.18)"/><circle cx="40" cy="40" r="8" fill="#7c3aed"/><circle cx="40" cy="40" r="4" fill="#a855f7"/></svg></div>
+    <div class="logo-title">NEX<span>US</span></div>
+    <div class="logo-sub">Activation de licence</div>
+  </div>
+  <div class="auth-card">
+    <div class="auth-title">CRÉER UN COMPTE</div>
+    <div class="err-box" id="reg-err"></div>
+    <div class="success-box" id="reg-success"></div>
+    <div class="hwid-box"><span>🔒</span><div><div class="hwid-label">HWID Machine</div><div class="hwid-val" id="reg-hwid">Détection...</div></div></div>
+    <div class="form-group"><label class="form-label">Clé de licence</label><input class="form-input" id="reg-key" type="text" placeholder="NEXUS-XXXX-XXXX-XXXX-XXXX" maxlength="29" autocomplete="off"/></div>
+    <div class="form-group"><label class="form-label">Pseudo</label><input class="form-input" id="reg-user" type="text" placeholder="Ton pseudo (min 3 car.)" autocomplete="off"/></div>
+    <div class="form-group"><label class="form-label">Mot de passe</label><input class="form-input" id="reg-pass" type="password" placeholder="Min 6 caractères"/></div>
+    <div class="form-group"><label class="form-label">Confirmer</label><input class="form-input" id="reg-pass2" type="password" placeholder="Répète ton mot de passe"/></div>
+    <button class="btn-auth" id="reg-btn" onclick="doRegister()">ACTIVER ET CRÉER LE COMPTE</button>
+    <div class="auth-link"><a onclick="showScreen('screen-login')">← Retour à la connexion</a></div>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dash">
+  <div class="sidebar">
+    <div class="sb-section">
+      <div class="sb-title">Navigation</div>
+      <button class="sb-btn active" onclick="showTab('overview',this)"><div class="sb-icon">📊</div>Vue d'ensemble</button>
+      <button class="sb-btn" onclick="showTab('games',this)"><div class="sb-icon">🎮</div>Profils Jeux</button>
+      <button class="sb-btn" onclick="showTab('gpu',this)"><div class="sb-icon">🖥️</div>GPU</button>
+      <button class="sb-btn" onclick="showTab('cleaner',this)"><div class="sb-icon">🧹</div>Nettoyage</button>
+      <button class="sb-btn" onclick="showTab('network',this)"><div class="sb-icon">🌐</div>Réseau</button>
+      <button class="sb-btn" onclick="showTab('checkup',this)"><div class="sb-icon">🩺</div>Check-up</button>
+      <button class="sb-btn" onclick="showTab('overclock',this)"><div class="sb-icon">⚡</div>Overclocking</button>
+      <button class="sb-btn" onclick="showTab('optimizer',this)"><div class="sb-icon">⚙️</div>Optimisations</button>
+      <button class="sb-btn" onclick="showTab('processes',this)"><div class="sb-icon">📋</div>Processus</button>
+    </div>
+    <div class="sb-foot">
+      <button class="sb-btn" onclick="doLogout()" style="color:var(--red);"><div class="sb-icon" style="background:rgba(239,68,68,0.08);">🚪</div>Déconnecter</button>
+      <div class="version-badge"><span>Nexus Pro v1.6</span><div class="version-dot"></div></div>
+    </div>
+  </div>
+
+  <div class="main">
+
+    <!-- Vue d'ensemble -->
+    <div id="tab-overview">
+      <div class="admin-warn" id="admin-warn">⚠️ Lancez en tant qu'administrateur pour toutes les optimisations.</div>
+      <div class="stats-row">
+        <div class="stat-card"><div class="stat-lbl">⚡ CPU</div><div class="stat-val purple" id="s-cpu">—</div></div>
+        <div class="stat-card"><div class="stat-lbl">💾 RAM Libre</div><div class="stat-val green" id="s-ram">—</div></div>
+        <div class="stat-card"><div class="stat-lbl">📊 RAM %</div><div class="stat-val amber" id="s-ramp">—</div></div>
+        <div class="stat-card"><div class="stat-lbl">🛡️ Admin</div><div class="stat-val" id="s-admin">—</div></div>
+      </div>
+      <div class="stats-row">
+        <div class="stat-card"><div class="stat-lbl">🖥️ GPU %</div><div class="stat-val purple" id="s-gpu-load">—</div></div>
+        <div class="stat-card"><div class="stat-lbl">🌡️ GPU Temp</div><div class="stat-val amber" id="s-gpu-temp">—</div></div>
+        <div class="stat-card"><div class="stat-lbl">🎮 VRAM Utilisée</div><div class="stat-val" id="s-gpu-vram">—</div></div>
+        <div class="stat-card"><div class="stat-lbl">📦 VRAM Total</div><div class="stat-val green" id="s-gpu-vram-total">—</div></div>
+      </div>
+      <div class="grid2">
+        <div class="panel">
+          <div class="panel-head"><div class="panel-title">Performances</div><div class="badge green">BON</div></div>
+          <div id="perf-bars-cont"></div>
+        </div>
+        <div class="panel">
+          <div class="panel-head"><div class="panel-title">⚡ Boost Rapide</div></div>
+          <p style="font-size:11px;color:var(--muted);margin-bottom:12px;line-height:1.6;">Applique toutes tes optimisations activées en un clic.</p>
+          <div id="boost-result" style="font-size:11px;color:var(--green);margin-bottom:8px;min-height:16px;"></div>
+          <button class="boost-btn" id="boost-btn" onclick="doBoost()">⚡ BOOST GAMING</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Profils Jeux -->
+    <div id="tab-games" style="display:none;">
+      <div class="panel">
+        <div class="panel-head"><div class="panel-title">🎮 Profils par jeu</div><div class="badge amber" id="detected-badge" style="display:none;">🟢 JEU DÉTECTÉ</div></div>
+        <p style="font-size:11px;color:var(--muted);margin-bottom:14px;line-height:1.6;">Optimisations spécifiques par jeu. Lance avant de jouer.</p>
+        <div class="games-grid" id="games-grid"><div style="color:var(--muted);text-align:center;padding:2rem;grid-column:1/-1;">Chargement...</div></div>
+      </div>
+    </div>
+
+    <!-- GPU -->
+    <div id="tab-gpu" style="display:none;">
+      <div class="panel">
+        <div class="panel-head"><div class="panel-title">🖥️ Optimisation GPU</div></div>
+        <div class="gpu-info"><span style="font-size:24px;">🖥️</span><div><div class="gpu-name-text" id="gpu-name">Détection...</div><div class="gpu-type-badge unknown" id="gpu-type-badge">—</div></div></div>
+        <div class="grid3">
+          <div class="action-card"><span class="action-icon">⚡</span><div class="action-title">OPTIMISATION COMPLÈTE</div><div class="action-desc">Applique tous les tweaks GPU.</div><div class="action-result" id="gpu-result"></div><button class="action-btn" id="gpu-btn" onclick="doGpuOptimize()">OPTIMISER GPU</button></div>
+          <div class="action-card"><span class="action-icon">🚀</span><div class="action-title">HAGS</div><div class="action-desc">Hardware Accelerated GPU Scheduling.</div><div class="action-result" id="hags-result"></div><button class="action-btn" id="hags-btn" onclick="doGpuOptimize()">ACTIVER HAGS</button></div>
+          <div class="action-card"><span class="action-icon">🎯</span><div class="action-title">PRIORITÉ GPU</div><div class="action-desc">Priorité maximale au GPU dans les jeux.</div><div class="action-result" id="prio-result"></div><button class="action-btn" id="prio-btn" onclick="doGpuOptimize()">APPLIQUER</button></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Nettoyage -->
+    <div id="tab-cleaner" style="display:none;">
+      <div class="panel">
+        <div class="panel-head"><div class="panel-title">🧹 Nettoyage système</div></div>
+        <div class="grid3">
+          <div class="action-card"><span class="action-icon">🧹</span><div class="action-title">NETTOYAGE COMPLET</div><div class="action-desc">Fichiers temp, RAM standby, Prefetch.</div><div class="action-result" id="clean-result"></div><button class="action-btn" id="clean-btn" onclick="doCleanAll()">NETTOYER TOUT</button></div>
+          <div class="action-card"><span class="action-icon">💾</span><div class="action-title">VIDER RAM</div><div class="action-desc">Libère la RAM en standby et vide le DNS.</div><div class="action-result" id="ram-result"></div><button class="action-btn" id="ram-btn" onclick="doCleanRam()">VIDER RAM</button></div>
+          <div class="action-card"><span class="action-icon">📁</span><div class="action-title">FICHIERS TEMP</div><div class="action-desc">Supprime les fichiers temporaires Windows.</div><div class="action-result" id="temp-result"></div><button class="action-btn" id="temp-btn" onclick="doCleanTemp()">SUPPRIMER</button></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Réseau -->
+    <div id="tab-network" style="display:none;">
+      <div class="panel">
+        <div class="panel-head"><div class="panel-title">🌐 Réseau</div></div>
+        <div class="net-stats">
+          <div class="net-stat"><div class="net-stat-val" id="net-ping">—</div><div class="net-stat-lbl">📡 Ping ms</div></div>
+          <div class="net-stat"><div class="net-stat-val" id="net-sent">—</div><div class="net-stat-lbl">⬆️ Envoyé MB</div></div>
+          <div class="net-stat"><div class="net-stat-val" id="net-recv">—</div><div class="net-stat-lbl">⬇️ Reçu MB</div></div>
+        </div>
+        <div class="grid2">
+          <div class="action-card"><span class="action-icon">🌐</span><div class="action-title">OPTIMISATION COMPLÈTE</div><div class="action-desc">TCP, DNS, QoS et carte réseau optimisés.</div><div class="action-result" id="net-result"></div><button class="action-btn" id="net-btn" onclick="doNetworkOptimize()">OPTIMISER RÉSEAU</button></div>
+          <div class="action-card"><span class="action-icon">📡</span><div class="action-title">TEST PING</div><div class="action-desc">Mesure ton ping vers Google DNS (8.8.8.8).</div><div class="action-result" id="ping-result"></div><button class="action-btn" id="ping-btn" onclick="doPingTest()">TESTER PING</button></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Check-up -->
+    <div id="tab-checkup" style="display:none;">
+      <div class="panel">
+        <div class="panel-head"><div class="panel-title">🩺 Routine Check-up</div><div class="badge">SÉLECTIONNE ET LANCE</div></div>
+        <p style="font-size:11px;color:var(--muted);margin-bottom:14px;line-height:1.6;">Sélectionne les tâches à effectuer et lance le check-up. À faire régulièrement pour maintenir ton PC en forme.</p>
+        <div class="checkup-grid">
+          <div class="checkup-card selected" id="cu-temp" onclick="toggleCheckup('temp',this)">
+            <div class="checkup-check"></div>
+            <div class="checkup-icon">🗑️</div>
+            <div class="checkup-name">Fichiers temporaires</div>
+            <div class="checkup-desc">Supprime les fichiers Windows et apps qui s'accumulent.</div>
+          </div>
+          <div class="checkup-card selected" id="cu-gpu_cache" onclick="toggleCheckup('gpu_cache',this)">
+            <div class="checkup-check"></div>
+            <div class="checkup-icon">🎮</div>
+            <div class="checkup-name">Caches GPU</div>
+            <div class="checkup-desc">Réinitialise les caches DirectX, NVIDIA, AMD et shaders.</div>
+          </div>
+          <div class="checkup-card" id="cu-disk" onclick="toggleCheckup('disk',this)">
+            <div class="checkup-check"></div>
+            <div class="checkup-icon">💿</div>
+            <div class="checkup-name">Optimisation disque</div>
+            <div class="checkup-desc">TRIM SSD et défragmentation pour les HDD.</div>
+          </div>
+          <div class="checkup-card" id="cu-history" onclick="toggleCheckup('history',this)">
+            <div class="checkup-check"></div>
+            <div class="checkup-icon">📜</div>
+            <div class="checkup-name">Historique Windows</div>
+            <div class="checkup-desc">Efface les fichiers récents et cache de miniatures.</div>
+          </div>
+          <div class="checkup-card" id="cu-sfc" onclick="toggleCheckup('sfc',this)">
+            <div class="checkup-check"></div>
+            <div class="checkup-icon">🔧</div>
+            <div class="checkup-name">Réparation système</div>
+            <div class="checkup-desc">Lance SFC pour détecter et réparer les fichiers corrompus.</div>
+          </div>
+        </div>
+        <div id="checkup-result" style="font-size:12px;color:var(--green);margin-bottom:10px;min-height:16px;"></div>
+        <button class="action-btn" id="checkup-btn" onclick="doCheckup()" style="width:100%;padding:13px;font-size:14px;">🩺 LANCER LE CHECK-UP</button>
+      </div>
+
+      <div class="panel">
+        <div class="panel-head"><div class="panel-title">⏰ Nettoyage Automatique</div></div>
+        <div class="auto-clean-box">
+          <div class="auto-clean-info">
+            <div class="auto-clean-title">Nettoyage RAM + Fichiers Temp</div>
+            <div class="auto-clean-desc">Lance automatiquement en arrière-plan toutes les X minutes.</div>
+          </div>
+          <select class="interval-select" id="auto-interval">
+            <option value="15">15 min</option>
+            <option value="30" selected>30 min</option>
+            <option value="60">1 heure</option>
+            <option value="120">2 heures</option>
+          </select>
+          <button class="action-btn" id="auto-btn" onclick="toggleAutoClean()" style="width:auto;padding:8px 16px;">ACTIVER</button>
+        </div>
+        <div id="auto-status" style="font-size:11px;color:var(--muted);text-align:center;"></div>
+      </div>
+    </div>
+
+    <!-- Overclocking -->
+    <div id="tab-overclock" style="display:none;">
+      <div class="warning-box">
+        <div class="warning-title">⚠️ Avertissement — Overclocking</div>
+        <div class="warning-text">Nexus Optimizer utilise uniquement des presets SÉCURISÉS :\n✅ Pas d'augmentation de fréquence manuelle\n✅ Pas d'undervolting\n✅ Uniquement ajustement du Power Limit\n\nNexus Software ne peut être tenu responsable des dommages éventuels. Procède à tes propres risques.</div>
+      </div>
+      <div class="oc-gpu-info">
+        <div>
+          <div class="gpu-name-text" id="oc-gpu-name">Détection GPU...</div>
+          <div style="font-size:11px;color:var(--muted);margin-top:2px;">NVIDIA uniquement pour l'overclocking</div>
+        </div>
+        <div class="oc-stats">
+          <div class="oc-stat"><div class="oc-stat-val" id="oc-temp">—</div><div class="oc-stat-lbl">TEMP °C</div></div>
+          <div class="oc-stat"><div class="oc-stat-val" id="oc-power">—</div><div class="oc-stat-lbl">POWER W</div></div>
+          <div class="oc-stat"><div class="oc-stat-val" id="oc-fan">—</div><div class="oc-stat-lbl">FAN %</div></div>
+        </div>
+      </div>
+      <div class="oc-presets" id="oc-presets">
+        <div style="color:var(--muted);text-align:center;padding:2rem;grid-column:1/-1;">Chargement...</div>
+      </div>
+      <button class="action-btn" onclick="resetOC()" style="background:rgba(239,68,68,0.1);border:1px solid rgba(239,68,68,0.3);color:var(--red);">🔄 Remettre les paramètres par défaut</button>
+    </div>
+
+    <!-- Optimisations -->
+    <div id="tab-optimizer" style="display:none;">
+      <div class="panel">
+        <div class="panel-head"><div class="panel-title">⚙️ Optimisations</div><div class="badge" id="opt-count-badge">—</div></div>
+        <div id="opt-list"></div>
+      </div>
+    </div>
+
+    <!-- Processus -->
+    <div id="tab-processes" style="display:none;">
+      <div class="panel">
+        <div class="panel-head">
+          <div class="panel-title">📋 Processus inutiles</div>
+          <button style="background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.25);border-radius:8px;padding:4px 12px;font-size:11px;color:var(--red);cursor:pointer;" onclick="killAll()">TOUT TERMINER</button>
+        </div>
+        <div id="proc-list"><div style="color:var(--muted);text-align:center;padding:2rem;">Chargement...</div></div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Modal confirmation OC -->
+<div class="confirm-modal" id="oc-modal">
+  <div class="confirm-box">
+    <div class="confirm-title">⚠️ Confirmation requise</div>
+    <div class="confirm-text" id="oc-modal-text"></div>
+    <div class="confirm-btns">
+      <button class="confirm-btn-cancel" onclick="closeOCModal()">ANNULER</button>
+      <button class="confirm-btn-ok" onclick="confirmOC()">JE COMPRENDS — CONTINUER</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"><span id="toast-icon"></span><span id="toast-msg"></span></div>
+
+<script>
+var _pyReady = false;
+var _currentUser = '';
+var optStates = {};
+var _selectedCheckups = ['temp', 'gpu_cache'];
+var _autoCleanRunning = false;
+var _pendingOCPreset = null;
+
+window.addEventListener('pywebviewready', function() {
+  _pyReady = true;
+  window.pywebview.api.get_hwid().then(function(hwid) {
+    document.getElementById('reg-hwid').textContent = hwid || 'Erreur';
+  });
+  window.pywebview.api.load_session().then(function(session) {
+    if (session && session.valid) {
+      _currentUser = session.username;
+      showDashboard(session.username);
+    }
+  });
+});
+
+function showScreen(id) {
+  document.querySelectorAll('.auth-screen').forEach(function(s){s.classList.remove('active');});
+  document.getElementById(id).classList.add('active');
+}
+
+function showDashboard(username) {
+  document.querySelectorAll('.auth-screen').forEach(function(s){s.classList.remove('active');});
+  document.getElementById('dash').style.display = 'flex';
+  var u = document.getElementById('tb-username');
+  u.textContent = '👤 ' + username;
+  u.style.display = 'inline';
+  initDashboard();
+}
+
+function showToast(msg, type) {
+  var t = document.getElementById('toast');
+  document.getElementById('toast-icon').textContent = type==='success'?'✅':type==='error'?'❌':'ℹ️';
+  document.getElementById('toast-msg').textContent = msg;
+  t.className = 'toast show '+(type||'');
+  setTimeout(function(){t.className='toast';}, 3500);
+}
+
+document.getElementById('reg-key').addEventListener('input', function() {
+  var v = this.value.toUpperCase().replace(/[^A-Z0-9]/g,'');
+  var parts = ['NEXUS'];
+  var rest = v.replace(/^NEXUS/,'');
+  for (var i=0; i<rest.length && parts.length<5; i+=4) parts.push(rest.slice(i,i+4));
+  this.value = parts.join('-');
+});
+
+document.getElementById('login-pass').addEventListener('keydown', function(e){if(e.key==='Enter')doLogin();});
+
+function doLogin() {
+  var user = document.getElementById('login-user').value.trim();
+  var pass = document.getElementById('login-pass').value;
+  var btn = document.getElementById('login-btn');
+  var err = document.getElementById('login-err');
+  err.style.display = 'none';
+  if (!user || !pass) { err.textContent = 'Remplis tous les champs.'; err.style.display='block'; return; }
+  btn.disabled = true; btn.textContent = 'CONNEXION...';
+  window.pywebview.api.login(user, pass).then(function(result) {
+    btn.disabled = false; btn.textContent = 'SE CONNECTER';
+    if (result && result.valid) { _currentUser = result.username; showToast('Bienvenue '+result.username+' !','success'); showDashboard(result.username); }
+    else { err.textContent = (result&&result.message)||'Erreur.'; err.style.display='block'; }
+  }).catch(function(e){ btn.disabled=false; btn.textContent='SE CONNECTER'; err.textContent='Erreur: '+e; err.style.display='block'; });
+}
+
+function doRegister() {
+  var key = document.getElementById('reg-key').value.trim();
+  var user = document.getElementById('reg-user').value.trim();
+  var pass = document.getElementById('reg-pass').value;
+  var pass2 = document.getElementById('reg-pass2').value;
+  var btn = document.getElementById('reg-btn');
+  var err = document.getElementById('reg-err');
+  var success = document.getElementById('reg-success');
+  err.style.display='none'; success.style.display='none';
+  if (!key||!user||!pass||!pass2) { err.textContent='Remplis tous les champs.'; err.style.display='block'; return; }
+  if (pass!==pass2) { err.textContent='Les mots de passe ne correspondent pas.'; err.style.display='block'; return; }
+  if (pass.length<6) { err.textContent='Mot de passe trop court (min 6).'; err.style.display='block'; return; }
+  if (user.length<3) { err.textContent='Pseudo trop court (min 3).'; err.style.display='block'; return; }
+  btn.disabled=true; btn.textContent='ACTIVATION...';
+  window.pywebview.api.activate_license(key, user, pass).then(function(result) {
+    btn.disabled=false; btn.textContent='ACTIVER ET CRÉER LE COMPTE';
+    if (result&&result.valid) { success.textContent='✓ Compte créé ! Redirection...'; success.style.display='block'; _currentUser=result.username; setTimeout(function(){showDashboard(result.username);},1500); }
+    else { err.textContent=(result&&result.message)||'Erreur.'; err.style.display='block'; }
+  }).catch(function(e){ btn.disabled=false; btn.textContent='ACTIVER ET CRÉER LE COMPTE'; err.textContent='Erreur: '+e; err.style.display='block'; });
+}
+
+function doLogout() {
+  window.pywebview.api.logout();
+  document.getElementById('dash').style.display='none';
+  document.getElementById('tb-username').style.display='none';
+  showScreen('screen-login');
+  document.getElementById('login-user').value='';
+  document.getElementById('login-pass').value='';
+}
+
+var optStates = {};
+
+function initDashboard() {
+  loadOptimizations();
+  refreshStats();
+  loadProcesses();
+  loadGameProfiles();
+  loadGpuInfo();
+  loadNetStats();
+}
+
+function refreshStats() {
+  window.pywebview.api.get_system_stats().then(function(s) {
+    if (!s||s.error) return;
+    document.getElementById('s-cpu').textContent = s.cpu_percent+'%';
+    document.getElementById('s-ram').textContent = s.ram_free_gb+' GB';
+    document.getElementById('s-ramp').textContent = s.ram_percent+'%';
+    var adminEl = document.getElementById('s-admin');
+    adminEl.textContent = s.is_admin?'✓ Admin':'✗ User';
+    adminEl.style.color = s.is_admin?'var(--green)':'var(--amber)';
+    document.getElementById('admin-warn').style.display = s.is_admin?'none':'block';
+    document.getElementById('net-sent').textContent = s.net_sent_mb;
+    document.getElementById('net-recv').textContent = s.net_recv_mb;
+    if (s.gpu_load!==undefined) {
+      document.getElementById('s-gpu-load').textContent = s.gpu_load+'%';
+      document.getElementById('s-gpu-load').className = 'stat-val '+(s.gpu_load>85?'red':s.gpu_load>60?'amber':'purple');
+      document.getElementById('s-gpu-temp').textContent = s.gpu_temp+'°C';
+      document.getElementById('s-gpu-temp').className = 'stat-val '+(s.gpu_temp>85?'red':s.gpu_temp>70?'amber':'amber');
+      document.getElementById('s-gpu-vram').textContent = s.gpu_vram_used+' MB';
+      document.getElementById('s-gpu-vram-total').textContent = s.gpu_vram_total+' MB';
+    }
+    var bars = [
+      {label:'CPU',val:s.cpu_percent,cls:s.cpu_percent>80?'red':s.cpu_percent>50?'amber':'green'},
+      {label:'RAM utilisée',val:s.ram_percent,cls:s.ram_percent>85?'red':s.ram_percent>65?'amber':''},
+    ];
+    document.getElementById('perf-bars-cont').innerHTML = bars.map(function(b){
+      return '<div class="bar-wrap"><div class="bar-head"><span>'+b.label+'</span><span>'+Math.round(b.val)+'%</span></div><div class="bar-track"><div class="bar-fill '+b.cls+'" style="width:'+b.val+'%"></div></div></div>';
+    }).join('');
+  });
+}
+
+window.updateStats = function(s) {
+  if (document.getElementById('dash').style.display==='none') return;
+  document.getElementById('s-cpu').textContent = s.cpu_percent+'%';
+  document.getElementById('s-ram').textContent = s.ram_free_gb+' GB';
+  document.getElementById('s-ramp').textContent = s.ram_percent+'%';
+  document.getElementById('net-sent').textContent = s.net_sent_mb;
+  document.getElementById('net-recv').textContent = s.net_recv_mb;
+  if (s.gpu_load!==undefined && s.gpu_load>0) {
+    document.getElementById('s-gpu-load').textContent = s.gpu_load+'%';
+    document.getElementById('s-gpu-temp').textContent = s.gpu_temp+'°C';
+    document.getElementById('s-gpu-vram').textContent = s.gpu_vram_used+' MB';
+    document.getElementById('s-gpu-vram-total').textContent = s.gpu_vram_total+' MB';
+  }
+};
+
+window.updateDetectedGames = function(games) {
+  document.getElementById('detected-badge').style.display = games.length>0?'block':'none';
+  games.forEach(function(id){var c=document.getElementById('game-card-'+id);if(c){c.classList.add('active-game');var b=c.querySelector('.detected-badge');if(b)b.style.display='block';}});
+};
+
+function loadGpuInfo() {
+  window.pywebview.api.get_gpu_info().then(function(info) {
+    if (!info) return;
+    document.getElementById('gpu-name').textContent = info.name;
+    var b = document.getElementById('gpu-type-badge');
+    b.textContent = info.type.toUpperCase();
+    b.className = 'gpu-type-badge '+info.type;
+  });
+}
+
+function loadNetStats() {
+  window.pywebview.api.get_ping().then(function(ping){
+    document.getElementById('net-ping').textContent = ping>0?ping:'—';
+  });
+}
+
+function loadGameProfiles() {
+  window.pywebview.api.get_game_profiles().then(function(profiles) {
+    if (!profiles) return;
+    document.getElementById('games-grid').innerHTML = profiles.map(function(p){
+      var tw = p.tweaks.map(function(t){return '<span class="game-tweak">'+t+'</span>';}).join('');
+      return '<div class="game-card" id="game-card-'+p.id+'"><div class="detected-badge">🟢 EN JEU</div><div class="game-icon">'+p.icon+'</div><div class="game-name">'+p.name+'</div><div class="game-desc">'+p.description+'</div><div class="game-tweaks">'+tw+'</div><button class="game-apply-btn" id="gbtn-'+p.id+'" onclick="applyGameProfile(\''+p.id+'\',this)">⚡ OPTIMISER</button></div>';
+    }).join('');
+  });
+}
+
+function applyGameProfile(id,btn) {
+  btn.textContent='⏳...'; btn.disabled=true;
+  window.pywebview.api.apply_game_profile(id).then(function(r){
+    btn.disabled=false;
+    if(r&&r.success){btn.textContent='✅ Appliqué!';btn.classList.add('done');document.getElementById('game-card-'+id).classList.add('applied');showToast('Profil appliqué !','success');setTimeout(function(){btn.textContent='⚡ OPTIMISER';btn.classList.remove('done');},3000);}
+    else{btn.textContent='⚡ OPTIMISER';showToast((r&&r.message)||'Erreur','error');}
+  });
+}
+
+function doGpuOptimize() {
+  var btns = ['gpu-btn','hags-btn','prio-btn'];
+  var labels = ['OPTIMISER GPU','ACTIVER HAGS','APPLIQUER'];
+  btns.forEach(function(id){var b=document.getElementById(id);b.disabled=true;b.textContent='⏳...';});
+  window.pywebview.api.optimize_gpu().then(function(r){
+    btns.forEach(function(id,i){var b=document.getElementById(id);b.disabled=false;b.textContent=r&&r.success?'✅ Fait':labels[i];if(r&&r.success){b.classList.add('done');setTimeout(function(){b.textContent=labels[i];b.classList.remove('done');},4000);}});
+    if(r&&r.success){document.getElementById('gpu-result').textContent=r.message;showToast(r.gpu_name+' optimisé !','success');}
+    else showToast('Erreur GPU','error');
+  });
+}
+
+function doCleanAll(){var b=document.getElementById('clean-btn');b.disabled=true;b.textContent='⏳...';window.pywebview.api.clean_all().then(function(r){b.disabled=false;if(r&&r.success){b.textContent='✅ Terminé';b.classList.add('done');document.getElementById('clean-result').textContent=r.message;showToast('Nettoyage terminé !','success');setTimeout(function(){b.textContent='NETTOYER TOUT';b.classList.remove('done');},4000);}else{b.textContent='NETTOYER TOUT';showToast('Erreur','error');}});}
+function doCleanRam(){var b=document.getElementById('ram-btn');b.disabled=true;b.textContent='⏳...';window.pywebview.api.clean_ram_only().then(function(){b.disabled=false;b.textContent='✅ Vidée';b.classList.add('done');document.getElementById('ram-result').textContent='RAM libérée !';showToast('RAM vidée !','success');setTimeout(function(){b.textContent='VIDER RAM';b.classList.remove('done');},3000);});}
+function doCleanTemp(){var b=document.getElementById('temp-btn');b.disabled=true;b.textContent='⏳...';window.pywebview.api.clean_all().then(function(r){b.disabled=false;if(r&&r.success){b.textContent='✅ Supprimé';b.classList.add('done');document.getElementById('temp-result').textContent=r.freed_mb+' MB libérés';showToast(r.freed_mb+' MB libérés !','success');setTimeout(function(){b.textContent='SUPPRIMER';b.classList.remove('done');},3000);}else b.textContent='SUPPRIMER';});}
+
+function doNetworkOptimize(){var b=document.getElementById('net-btn');b.disabled=true;b.textContent='⏳...';window.pywebview.api.optimize_network().then(function(r){b.disabled=false;if(r&&r.success){b.textContent='✅ Optimisé';b.classList.add('done');document.getElementById('net-result').textContent=r.message;if(r.ping>0)document.getElementById('net-ping').textContent=r.ping;showToast('Réseau optimisé !','success');setTimeout(function(){b.textContent='OPTIMISER RÉSEAU';b.classList.remove('done');},4000);}else{b.textContent='OPTIMISER RÉSEAU';showToast('Erreur','error');}});}
+function doPingTest(){var b=document.getElementById('ping-btn');b.disabled=true;b.textContent='⏳...';window.pywebview.api.get_ping().then(function(ping){b.disabled=false;b.textContent='TESTER PING';var msg=ping>0?ping+' ms':'Échec';document.getElementById('ping-result').textContent=msg;document.getElementById('net-ping').textContent=ping>0?ping:'—';showToast('Ping : '+msg,ping>0?'success':'error');});}
+
+// ── Check-up ──────────────────────────────────────────────────
+function toggleCheckup(id, card) {
+  var idx = _selectedCheckups.indexOf(id);
+  if (idx > -1) { _selectedCheckups.splice(idx, 1); card.classList.remove('selected'); }
+  else { _selectedCheckups.push(id); card.classList.add('selected'); }
+}
+
+function doCheckup() {
+  if (_selectedCheckups.length === 0) { showToast('Sélectionne au moins une tâche','error'); return; }
+  var btn = document.getElementById('checkup-btn');
+  btn.disabled = true; btn.textContent = '⏳ Check-up en cours...';
+  window.pywebview.api.run_checkup(_selectedCheckups).then(function(r) {
+    btn.disabled = false; btn.textContent = '🩺 LANCER LE CHECK-UP';
+    if (r && r.success) {
+      document.getElementById('checkup-result').textContent = '✓ '+r.message;
+      showToast('Check-up terminé !', 'success');
+      document.querySelectorAll('.checkup-card.selected').forEach(function(c){c.classList.add('done');setTimeout(function(){c.classList.remove('done');},3000);});
+    } else showToast('Erreur check-up', 'error');
+  });
+}
+
+function toggleAutoClean() {
+  var btn = document.getElementById('auto-btn');
+  var interval = parseInt(document.getElementById('auto-interval').value);
+  if (!_autoCleanRunning) {
+    window.pywebview.api.start_auto_clean(interval).then(function(r){
+      if(r&&r.success){ _autoCleanRunning=true; btn.textContent='ARRÊTER'; btn.style.background='linear-gradient(135deg,#14532d,#15803d)'; document.getElementById('auto-status').textContent='✓ Actif — nettoyage toutes les '+interval+' min'; showToast('Nettoyage auto activé !','success'); }
+    });
+  } else {
+    window.pywebview.api.stop_auto_clean().then(function(r){
+      _autoCleanRunning=false; btn.textContent='ACTIVER'; btn.style.background=''; document.getElementById('auto-status').textContent=''; showToast('Nettoyage auto arrêté','');
+    });
+  }
+}
+
+// ── Overclocking ──────────────────────────────────────────────
+function loadOCInfo() {
+  window.pywebview.api.get_gpu_oc_info().then(function(info) {
+    if (!info) return;
+    document.getElementById('oc-gpu-name').textContent = info.name;
+    document.getElementById('oc-temp').textContent = info.temperature > 0 ? info.temperature+'°' : '—';
+    document.getElementById('oc-power').textContent = info.power_limit > 0 ? Math.round(info.power_limit)+'W' : '—';
+    document.getElementById('oc-fan').textContent = info.fan_speed > 0 ? info.fan_speed+'%' : '—';
+  });
+  window.pywebview.api.get_oc_presets().then(function(presets) {
+    if (!presets) return;
+    var icons = {balanced:'⚖️', performance:'🚀', cool:'❄️'};
+    document.getElementById('oc-presets').innerHTML = presets.map(function(p){
+      return '<div class="oc-card" id="oc-'+p.id+'" onclick="selectOCPreset(\''+p.id+'\')">'+
+        '<div style="font-size:28px;margin-bottom:8px;">'+(icons[p.id]||'⚡')+'</div>'+
+        '<div class="oc-name">'+p.name+'</div>'+
+        '<div class="oc-desc">'+p.description+'</div>'+
+        '<div class="oc-power">Power Limit : '+p.power_limit+'% du TDP</div>'+
+        '<button class="oc-apply-btn" onclick="event.stopPropagation();applyOCPreset(\''+p.id+'\')">APPLIQUER</button>'+
+      '</div>';
+    }).join('');
+  });
+}
+
+function selectOCPreset(id) {
+  document.querySelectorAll('.oc-card').forEach(function(c){c.classList.remove('selected');});
+  document.getElementById('oc-'+id).classList.add('selected');
+}
+
+function applyOCPreset(id) {
+  _pendingOCPreset = id;
+  window.pywebview.api.get_oc_warning().then(function(r){
+    document.getElementById('oc-modal-text').textContent = r.message;
+    document.getElementById('oc-modal').classList.add('show');
+  });
+}
+
+function closeOCModal() {
+  document.getElementById('oc-modal').classList.remove('show');
+  _pendingOCPreset = null;
+}
+
+function confirmOC() {
+  document.getElementById('oc-modal').classList.remove('show');
+  if (!_pendingOCPreset) return;
+  var preset = _pendingOCPreset;
+  _pendingOCPreset = null;
+  showToast('Application du preset...', '');
+  window.pywebview.api.apply_oc_preset(preset, true).then(function(r){
+    if (r&&r.success) { showToast('Preset '+r.preset+' appliqué !','success'); loadOCInfo(); }
+    else showToast((r&&r.message)||'Erreur','error');
+  });
+}
+
+function resetOC() {
+  window.pywebview.api.reset_oc().then(function(r){
+    if(r&&r.success){showToast('GPU remis par défaut','success');loadOCInfo();}
+  });
+}
+
+function loadOptimizations() {
+  window.pywebview.api.get_optimizations().then(function(opts) {
+    if (!opts) return;
+    var n=0;
+    opts.forEach(function(o){optStates[o.id]=o.enabled;if(o.enabled)n++;});
+    document.getElementById('opt-count-badge').textContent=n+' ACTIVES';
+    document.getElementById('opt-list').innerHTML=opts.map(function(o){
+      return '<div class="opt-item"><div><div class="opt-name">'+o.name+(o.requires_admin?' <span style="font-size:9px;color:var(--amber);background:rgba(251,191,36,0.1);padding:1px 5px;border-radius:4px;">ADMIN</span>':'')+'</div><div class="opt-desc">'+o.description+'</div></div><div class="toggle '+(o.enabled?'on':'')+'" id="tog-'+o.id+'" onclick="toggleOpt(\''+o.id+'\')"></div></div>';
+    }).join('');
+  });
+}
+
+function toggleOpt(id) {
+  var tog=document.getElementById('tog-'+id);
+  var ns=!optStates[id];
+  window.pywebview.api.toggle_optimization(id,ns).then(function(r){
+    if(r&&r.success){optStates[id]=ns;tog.classList.toggle('on',ns);var n=Object.values(optStates).filter(Boolean).length;document.getElementById('opt-count-badge').textContent=n+' ACTIVES';showToast((ns?'✓ ':' ✗ ')+id.replace(/_/g,' '),'');}
+    else showToast((r&&r.message)||'Erreur','error');
+  });
+}
+
+function doBoost() {
+  var b=document.getElementById('boost-btn');b.textContent='⏳ APPLICATION...';b.disabled=true;
+  window.pywebview.api.boost_gaming().then(function(r){
+    b.disabled=false;
+    if(r&&r.success){b.textContent='✅ BOOST ACTIF';b.classList.add('running');document.getElementById('boost-result').textContent='✓ '+r.applied+'/'+r.total+' optimisations appliquées';showToast('Boost activé !','success');setTimeout(function(){b.textContent='⚡ BOOST GAMING';b.classList.remove('running');},5000);}
+    else{b.textContent='⚡ BOOST GAMING';showToast('Erreur','error');}
+  });
+}
+
+function loadProcesses() {
+  window.pywebview.api.get_processes().then(function(procs){
+    var c=document.getElementById('proc-list');
+    if(!procs||procs.length===0){c.innerHTML='<div style="color:var(--muted);text-align:center;padding:2rem;">✓ Aucun processus inutile</div>';return;}
+    c.innerHTML=procs.map(function(p){return '<div class="proc-item"><span class="proc-name">'+p.name+'</span><span class="proc-mem">'+p.memory_mb+' MB</span><button class="proc-kill" onclick="killProc(\''+p.name+'\',this)">TERMINER</button></div>';}).join('');
+  });
+}
+
+function killProc(name,btn){btn.disabled=true;btn.textContent='...';window.pywebview.api.kill_process(name).then(function(ok){if(ok){btn.textContent='TERMINÉ';showToast(name+' terminé.','success');}else{btn.disabled=false;btn.textContent='TERMINER';showToast('Impossible','error');}});}
+function killAll(){document.querySelectorAll('.proc-kill:not(:disabled)').forEach(function(btn){killProc(btn.closest('.proc-item').querySelector('.proc-name').textContent,btn);});}
+
+function showTab(name,btn) {
+  document.querySelectorAll('[id^="tab-"]').forEach(function(t){t.style.display='none';});
+  document.querySelectorAll('.sb-btn').forEach(function(b){b.classList.remove('active');});
+  document.getElementById('tab-'+name).style.display='block';
+  btn.classList.add('active');
+  if(name==='processes')loadProcesses();
+  if(name==='games')loadGameProfiles();
+  if(name==='gpu')loadGpuInfo();
+  if(name==='network')loadNetStats();
+  if(name==='overclock')loadOCInfo();
+}
+</script>
+</body>
+</html>
