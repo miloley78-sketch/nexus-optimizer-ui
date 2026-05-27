@@ -73,21 +73,25 @@ body{background:var(--bg);font-family:'Exo 2',sans-serif;color:var(--text);overf
 .tb-btn.cl:hover svg{stroke:var(--red);}
 
 /* ── Update ── */
-#upd-bar{background:rgba(29,78,216,0.12);border-bottom:1px solid rgba(59,130,246,0.22);padding:8px 18px;display:none;align-items:center;justify-content:space-between;flex-shrink:0;}
-#upd-bar.show{display:flex;}
-.upd-v{font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:700;color:#93c5fd;}
-.upd-cl{font-size:10px;color:rgba(147,197,253,0.55);}
+/* update notification - coin bas droite */
+#upd-notif{position:fixed;bottom:22px;right:22px;background:rgba(12,9,24,0.97);border:1px solid rgba(59,130,246,0.35);border-radius:14px;padding:14px 16px;width:300px;z-index:500;display:none;flex-direction:column;gap:8px;backdrop-filter:blur(12px);box-shadow:0 8px 32px rgba(0,0,0,0.4);}
+#upd-notif.show{display:flex;}
+.upd-notif-head{display:flex;align-items:center;justify-content:space-between;}
+.upd-v{font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;color:#60a5fa;}
+.upd-dismiss{background:transparent;border:none;color:#7c6f9a;cursor:pointer;font-size:16px;line-height:1;}
+.upd-cl{font-size:10px;color:#7c6f9a;line-height:1.5;}
 .upd-btns{display:flex;gap:7px;}
-.upd-now{background:linear-gradient(135deg,#1d4ed8,#3b82f6);border:none;border-radius:7px;padding:6px 14px;font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;color:#fff;cursor:pointer;}
-.upd-later{background:transparent;border:1px solid rgba(255,255,255,0.1);border-radius:7px;padding:6px 10px;font-size:10px;color:rgba(255,255,255,0.35);cursor:pointer;}
-.upd-prog{height:3px;background:rgba(59,130,246,0.12);border-radius:2px;margin-top:4px;overflow:hidden;display:none;}
+.upd-now{flex:1;background:linear-gradient(135deg,#1d4ed8,#3b82f6);border:none;border-radius:8px;padding:8px;font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;color:#fff;cursor:pointer;transition:all .2s;}
+.upd-now:hover{box-shadow:0 4px 14px rgba(59,130,246,0.4);}
+.upd-later{background:transparent;border:1px solid rgba(255,255,255,0.1);border-radius:8px;padding:8px 12px;font-size:10px;color:rgba(255,255,255,0.35);cursor:pointer;}
+.upd-prog{height:3px;background:rgba(59,130,246,0.12);border-radius:2px;margin-top:2px;overflow:hidden;display:none;}
 .upd-prog-f{height:100%;background:#3b82f6;border-radius:2px;transition:width .3s;width:0%;}
 
 /* ── Layout ── */
 #layout{display:flex;flex:1;overflow:hidden;}
 
 /* ── Sidebar ── */
-#sb{width:218px;background:rgba(7,5,14,0.98);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:.75rem 0;flex-shrink:0;overflow-y:auto;}
+#sb{width:218px;background:rgba(7,5,14,0.98);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:.75rem 0;flex-shrink:0;overflow:hidden;}
 .sb-user{margin:0 10px 1rem;background:rgba(139,92,246,0.06);border:1px solid rgba(139,92,246,0.12);border-radius:14px;padding:12px;}
 .sb-uname{font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:700;color:#fff;margin-bottom:2px;}
 .sb-uplan{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--pl);}
@@ -376,10 +380,7 @@ canvas#chart{width:100%;height:120px;display:block;}
       <button class="tb-btn cl" onclick="window.pywebview.api.close_window()"><svg viewBox="0 0 11 11"><line x1="1" y1="1" x2="10" y2="10"/><line x1="10" y1="1" x2="1" y2="10"/></svg></button>
     </div>
   </div>
-  <div id="upd-bar">
-    <div><div class="upd-v">🚀 Mise à jour — <span id="upd-ver"></span></div><div class="upd-cl" id="upd-cl"></div><div class="upd-prog" id="upd-prog"><div class="upd-prog-f" id="upd-prog-f"></div></div></div>
-    <div class="upd-btns"><button class="upd-later" onclick="document.getElementById('upd-bar').classList.remove('show')">Plus tard</button><button class="upd-now" id="upd-btn" onclick="doUpdate()">METTRE À JOUR</button></div>
-  </div>
+
   <div id="layout">
     <!-- Sidebar -->
     <div id="sb">
@@ -710,6 +711,19 @@ canvas#chart{width:100%;height:120px;display:block;}
   </div>
 </div>
 
+<!-- Update notification coin bas droite -->
+<div id="upd-notif">
+  <div class="upd-notif-head">
+    <div class="upd-v">🚀 Mise à jour — <span id="upd-ver"></span></div>
+    <button class="upd-dismiss" onclick="document.getElementById('upd-notif').classList.remove('show')">✕</button>
+  </div>
+  <div class="upd-cl" id="upd-cl"></div>
+  <div class="upd-prog" id="upd-prog"><div class="upd-prog-f" id="upd-prog-f"></div></div>
+  <div class="upd-btns">
+    <button class="upd-later" onclick="document.getElementById('upd-notif').classList.remove('show')">Plus tard</button>
+    <button class="upd-now" id="upd-btn" onclick="doUpdate()">METTRE À JOUR</button>
+  </div>
+</div>
 <!-- Modal OC -->
 <div class="modal-bg" id="oc-modal">
   <div class="modal-box">
@@ -774,7 +788,7 @@ window.showUpdateNotification=function(u){
   _updUrl=u.download_url;
   document.getElementById('upd-ver').textContent='v'+u.latest;
   document.getElementById('upd-cl').textContent=u.changelog||'';
-  document.getElementById('upd-bar').classList.add('show');
+  document.getElementById('upd-notif').classList.add('show');
 };
 
 function doUpdate(){
@@ -784,339 +798,4 @@ function doUpdate(){
   window.pywebview.api.download_update(_updUrl).then(function(r){
     clearInterval(iv);
     if(r&&r.success){pf.style.width='100%';b.textContent='✅ Redémarrage...';showToast('Mise à jour installée !','success');}
-    else{b.disabled=false;b.textContent='METTRE À JOUR';p.style.display='none';showToast((r&&r.message)||'Erreur','error');}
-  });
-}
-
-function showS(id){document.querySelectorAll('.auth-wrap').forEach(function(s){s.classList.remove('active');});document.getElementById(id).classList.add('active');}
-function showToast(m,t){var el=document.getElementById('toast');el.textContent=(t==='success'?'✅ ':t==='error'?'❌ ':'ℹ️ ')+m;el.className='toast show '+(t||'');setTimeout(function(){el.className='toast';},3500);}
-
-document.getElementById('r-key').addEventListener('input',function(){
-  var v=this.value.toUpperCase().replace(/[^A-Z0-9]/g,'');
-  var p=['NEXUS'],r=v.replace(/^NEXUS/,'');
-  for(var i=0;i<r.length&&p.length<5;i+=4)p.push(r.slice(i,i+4));
-  this.value=p.join('-');
-});
-document.getElementById('l-pass').addEventListener('keydown',function(e){if(e.key==='Enter')doLogin();});
-
-function doLogin(){
-  var u=document.getElementById('l-user').value.trim(),p=document.getElementById('l-pass').value;
-  var b=document.getElementById('l-btn'),e=document.getElementById('l-err');
-  e.style.display='none';
-  if(!u||!p){e.textContent='Remplis tous les champs.';e.style.display='block';return;}
-  b.disabled=true;b.querySelector('span').textContent='CONNEXION...';
-  window.pywebview.api.login(u,p).then(function(r){
-    b.disabled=false;b.querySelector('span').textContent='SE CONNECTER';
-    if(r&&r.valid){_user=r.username;showToast('Bienvenue '+r.username+' !','success');goDash(r.username);}
-    else{e.textContent=(r&&r.message)||'Erreur.';e.style.display='block';}
-  }).catch(function(ex){b.disabled=false;b.querySelector('span').textContent='SE CONNECTER';e.textContent='Erreur: '+ex;e.style.display='block';});
-}
-
-function doReg(){
-  var k=document.getElementById('r-key').value.trim(),u=document.getElementById('r-user').value.trim();
-  var p=document.getElementById('r-pass').value,p2=document.getElementById('r-pass2').value;
-  var b=document.getElementById('r-btn'),e=document.getElementById('r-err'),ok=document.getElementById('r-ok');
-  e.style.display='none';ok.style.display='none';
-  if(!k||!u||!p||!p2){e.textContent='Remplis tous les champs.';e.style.display='block';return;}
-  if(p!==p2){e.textContent='Les mots de passe ne correspondent pas.';e.style.display='block';return;}
-  if(p.length<6){e.textContent='Mot de passe trop court (min 6).';e.style.display='block';return;}
-  if(u.length<3){e.textContent='Pseudo trop court (min 3).';e.style.display='block';return;}
-  b.disabled=true;b.querySelector('span').textContent='ACTIVATION...';
-  window.pywebview.api.activate_license(k,u,p).then(function(r){
-    b.disabled=false;b.querySelector('span').textContent='ACTIVER ET CRÉER LE COMPTE';
-    if(r&&r.valid){ok.textContent='✓ Compte créé ! Redirection...';ok.style.display='block';_user=r.username;setTimeout(function(){goDash(r.username);},1500);}
-    else{e.textContent=(r&&r.message)||'Erreur.';e.style.display='block';}
-  }).catch(function(ex){b.disabled=false;b.querySelector('span').textContent='ACTIVER ET CRÉER LE COMPTE';e.textContent='Erreur: '+ex;e.style.display='block';});
-}
-
-function goDash(username){
-  document.querySelectorAll('.auth-wrap').forEach(function(s){s.classList.remove('active');});
-  document.getElementById('app').style.display='flex';
-  document.getElementById('app').style.flexDirection='column';
-  document.getElementById('tb-pill').style.display='flex';
-  document.getElementById('tb-av').textContent=username[0].toUpperCase();
-  document.getElementById('tb-un').textContent=username;
-  document.getElementById('sb-uname').textContent=username;
-  document.getElementById('home-uname').textContent=username;
-  initDash();
-}
-
-function doLogout(){
-  window.pywebview.api.logout();
-  document.getElementById('app').style.display='none';
-  document.getElementById('tb-pill').style.display='none';
-  showS('s-login');
-  document.getElementById('l-user').value='';
-  document.getElementById('l-pass').value='';
-}
-
-function initDash(){
-  initChart();loadOpts();refreshStats();loadProcs();loadGames();loadGpuInfo();loadNetStats();
-}
-
-// ── Chart ────────────────────────────────────────────────────────
-function initChart(){
-  var canvas=document.getElementById('chart');
-  canvas.width=canvas.offsetWidth||500;canvas.height=120;
-  chartCtx=canvas.getContext('2d');
-  for(var i=0;i<MAX_PTS;i++){chartData.cpu.push(0);chartData.ram.push(0);chartData.gpu.push(0);}
-  drawChart();
-}
-
-function drawChart(){
-  if(!chartCtx)return;
-  var W=chartCtx.canvas.width,H=chartCtx.canvas.height;
-  chartCtx.clearRect(0,0,W,H);
-  for(var i=0;i<=4;i++){chartCtx.beginPath();chartCtx.strokeStyle='rgba(139,92,246,0.06)';chartCtx.lineWidth=1;chartCtx.moveTo(0,H*i/4);chartCtx.lineTo(W,H*i/4);chartCtx.stroke();}
-  [['cpu','#a78bfa','167,139,250'],['ram','#34d399','52,211,153'],['gpu','#fbbf24','251,191,36']].forEach(function(cfg){
-    var data=chartData[cfg[0]];
-    chartCtx.beginPath();chartCtx.strokeStyle=cfg[1];chartCtx.lineWidth=2;chartCtx.shadowColor=cfg[1];chartCtx.shadowBlur=3;
-    data.forEach(function(v,i){var x=i/(MAX_PTS-1)*W,y=H-(v/100)*H;if(i===0)chartCtx.moveTo(x,y);else chartCtx.lineTo(x,y);});
-    chartCtx.stroke();chartCtx.shadowBlur=0;
-    chartCtx.beginPath();data.forEach(function(v,i){var x=i/(MAX_PTS-1)*W,y=H-(v/100)*H;if(i===0)chartCtx.moveTo(x,y);else chartCtx.lineTo(x,y);});
-    chartCtx.lineTo(W,H);chartCtx.lineTo(0,H);chartCtx.closePath();
-    chartCtx.fillStyle='rgba('+cfg[2]+',0.05)';chartCtx.fill();
-  });
-}
-
-function updateChart(cpu,ram,gpu){
-  chartData.cpu.push(cpu);chartData.cpu.shift();
-  chartData.ram.push(ram);chartData.ram.shift();
-  chartData.gpu.push(gpu);chartData.gpu.shift();
-  drawChart();
-}
-
-// ── Stats ────────────────────────────────────────────────────────
-function updateStatsUI(s){
-  document.getElementById('s-cpu').textContent=s.cpu_percent+'%';
-  document.getElementById('s-cpu-b').style.width=s.cpu_percent+'%';
-  document.getElementById('s-ram').textContent=s.ram_free_gb+' GB';
-  document.getElementById('s-ram-b').style.width=s.ram_percent+'%';
-  document.getElementById('s-gpu').textContent=(s.gpu_load||0)+'%';
-  document.getElementById('s-gpu-b').style.width=(s.gpu_load||0)+'%';
-  document.getElementById('s-temp').textContent=(s.gpu_temp||0)+'°C';
-  document.getElementById('s-temp-b').style.width=Math.min(s.gpu_temp||0,100)+'%';
-  document.getElementById('n-sent').textContent=s.net_sent_mb;
-  document.getElementById('n-recv').textContent=s.net_recv_mb;
-  if(s.is_admin!==undefined)document.getElementById('admin-w').style.display=s.is_admin?'none':'block';
-  updateChart(s.cpu_percent,s.ram_percent,s.gpu_load||0);
-}
-
-function refreshStats(){window.pywebview.api.get_system_stats().then(function(s){if(!s||s.error)return;updateStatsUI(s);});}
-window.updateStats=function(s){if(document.getElementById('app').style.display==='none')return;updateStatsUI(s);};
-window.updateDetectedGames=function(games){
-  document.getElementById('det-badge').style.display=games.length>0?'block':'none';
-  games.forEach(function(id){var c=document.getElementById('gc-'+id);if(c){c.classList.add('active-game');var p=c.querySelector('.det-pill');if(p)p.style.display='block';}});
-};
-
-// ── GPU ──────────────────────────────────────────────────────────
-function loadGpuInfo(){
-  window.pywebview.api.get_gpu_info().then(function(i){
-    if(!i)return;
-    document.getElementById('gpu-name').textContent=i.name;
-    var b=document.getElementById('gpu-type');b.textContent=i.type.toUpperCase();b.className='gpu-tp '+i.type;
-  });
-}
-function doGpu(){
-  var btns=[['gpu-btn','OPTIMISER GPU'],['hags-btn','ACTIVER HAGS'],['prio-btn','APPLIQUER']];
-  btns.forEach(function(x){var b=document.getElementById(x[0]);b.disabled=true;b.querySelector('span').textContent='⏳...';});
-  window.pywebview.api.optimize_gpu().then(function(r){
-    btns.forEach(function(x){var b=document.getElementById(x[0]);b.disabled=false;if(r&&r.success){b.querySelector('span').textContent='✅ Fait';b.classList.add('done');setTimeout(function(){b.querySelector('span').textContent=x[1];b.classList.remove('done');},4000);}else b.querySelector('span').textContent=x[1];});
-    if(r&&r.success)showToast(r.gpu_name+' optimisé !','success');else showToast('Erreur GPU','error');
-  });
-}
-
-// ── Cleaner ──────────────────────────────────────────────────────
-function doClean(){var b=document.getElementById('clean-btn');b.disabled=true;b.querySelector('span').textContent='⏳...';window.pywebview.api.clean_all().then(function(r){b.disabled=false;if(r&&r.success){b.querySelector('span').textContent='✅ Terminé';b.classList.add('done');document.getElementById('clean-r').textContent=r.message;showToast('Nettoyage terminé !','success');setTimeout(function(){b.querySelector('span').textContent='NETTOYER TOUT';b.classList.remove('done');},4000);}else{b.querySelector('span').textContent='NETTOYER TOUT';showToast('Erreur','error');}});}
-function doRam(){var b=document.getElementById('ram-btn');b.disabled=true;b.querySelector('span').textContent='⏳...';window.pywebview.api.clean_ram_only().then(function(){b.disabled=false;b.querySelector('span').textContent='✅ Vidée';b.classList.add('done');document.getElementById('ram-r').textContent='RAM libérée !';showToast('RAM vidée !','success');setTimeout(function(){b.querySelector('span').textContent='VIDER RAM';b.classList.remove('done');},3000);});}
-function doTemp(){var b=document.getElementById('temp-btn');b.disabled=true;b.querySelector('span').textContent='⏳...';window.pywebview.api.clean_all().then(function(r){b.disabled=false;if(r&&r.success){b.querySelector('span').textContent='✅ Supprimé';b.classList.add('done');document.getElementById('temp-r').textContent=r.freed_mb+' MB libérés';showToast(r.freed_mb+' MB libérés !','success');setTimeout(function(){b.querySelector('span').textContent='SUPPRIMER';b.classList.remove('done');},3000);}else b.querySelector('span').textContent='SUPPRIMER';});}
-
-// ── Network ──────────────────────────────────────────────────────
-function loadNetStats(){window.pywebview.api.get_ping().then(function(p){document.getElementById('n-ping').textContent=p>0?p:'—';});}
-function doNet(){var b=document.getElementById('net-btn');b.disabled=true;b.querySelector('span').textContent='⏳...';window.pywebview.api.optimize_network().then(function(r){b.disabled=false;if(r&&r.success){b.querySelector('span').textContent='✅ Optimisé';b.classList.add('done');document.getElementById('net-r').textContent=r.message;if(r.ping>0)document.getElementById('n-ping').textContent=r.ping;showToast('Réseau optimisé !','success');setTimeout(function(){b.querySelector('span').textContent='OPTIMISER RÉSEAU';b.classList.remove('done');},4000);}else{b.querySelector('span').textContent='OPTIMISER RÉSEAU';showToast('Erreur','error');}});}
-function doPing(){var b=document.getElementById('ping-btn');b.disabled=true;b.querySelector('span').textContent='⏳...';window.pywebview.api.get_ping().then(function(p){b.disabled=false;b.querySelector('span').textContent='TESTER PING';var m=p>0?p+' ms':'Échec';document.getElementById('ping-r').textContent=m;document.getElementById('n-ping').textContent=p>0?p:'—';showToast('Ping: '+m,p>0?'success':'error');});}
-
-function doNic(){var b=document.getElementById('nic-btn');b.disabled=true;b.querySelector('span').textContent='⏳...';window.pywebview.api.optimize_nic().then(function(r){b.disabled=false;if(r&&r.success){b.querySelector('span').textContent='✅ Fait';b.classList.add('done');document.getElementById('nic-r').textContent=r.message;showToast('Carte réseau optimisée !','success');setTimeout(function(){b.querySelector('span').textContent='OPTIMISER';b.classList.remove('done');},4000);}else{b.querySelector('span').textContent='OPTIMISER';showToast('Erreur','error');}});}
-function doCong(){var b=document.getElementById('cong-btn');b.disabled=true;b.querySelector('span').textContent='⏳...';window.pywebview.api.optimize_congestion().then(function(r){b.disabled=false;if(r&&r.success){b.querySelector('span').textContent='✅ Fait';b.classList.add('done');document.getElementById('cong-r').textContent=r.message;showToast('Contrôle congestion optimisé !','success');setTimeout(function(){b.querySelector('span').textContent='OPTIMISER';b.classList.remove('done');},4000);}else{b.querySelector('span').textContent='OPTIMISER';showToast('Erreur','error');}});}
-function doDscp(){var b=document.getElementById('dscp-btn');b.disabled=true;b.querySelector('span').textContent='⏳...';window.pywebview.api.optimize_dscp().then(function(r){b.disabled=false;if(r&&r.success){b.querySelector('span').textContent='✅ Fait';b.classList.add('done');document.getElementById('dscp-r').textContent=r.message;showToast('Priorisation DSCP activée !','success');setTimeout(function(){b.querySelector('span').textContent='OPTIMISER';b.classList.remove('done');},4000);}else{b.querySelector('span').textContent='OPTIMISER';showToast('Erreur','error');}});}
-
-// ── Games ────────────────────────────────────────────────────────
-var GAME_LOGOS={
-  cs2:{bg:'rgba(243,104,64,0.12)',stroke:'#f36840',svg:'<circle cx="12" cy="12" r="10"/><path d="M12 7v5l3 3" stroke-width="2"/>'},
-  valorant:{bg:'rgba(255,70,85,0.12)',stroke:'#ff4655',svg:'<path d="M3 6l9 12 9-12H3z"/>'},
-  fortnite:{bg:'rgba(89,200,235,0.12)',stroke:'#59c8eb',svg:'<polygon points="12,2 22,8 22,16 12,22 2,16 2,8"/>'},
-  warzone:{bg:'rgba(180,210,70,0.12)',stroke:'#b4d246',svg:'<path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/>'},
-  apex:{bg:'rgba(205,45,0,0.12)',stroke:'#cd2d00',svg:'<path d="M12 2l3 7h7l-5.5 4 2 7L12 16l-6.5 4 2-7L2 9h7z"/>'},
-  minecraft:{bg:'rgba(100,200,80,0.12)',stroke:'#64c850',svg:'<rect x="3" y="3" width="18" height="18" rx="2"/><path d="M9 9h6v6H9z"/>'},
-  gta5:{bg:'rgba(0,180,255,0.12)',stroke:'#00b4ff',svg:'<circle cx="12" cy="12" r="10"/><path d="M8 12h8M12 8v8"/>'},
-  roblox:{bg:'rgba(226,35,26,0.12)',stroke:'#e2231a',svg:'<rect x="3" y="3" width="18" height="18" rx="3"/><rect x="8" y="8" width="8" height="8" rx="1"/>'}
-};
-
-function loadGames(){
-  window.pywebview.api.get_game_profiles().then(function(profs){
-    if(!profs)return;
-    document.getElementById('games-grid').innerHTML=profs.map(function(p){
-      var logo=GAME_LOGOS[p.id]||{bg:'rgba(139,92,246,0.1)',stroke:'#a78bfa',svg:'<circle cx="12" cy="12" r="9"/>'};
-      var tw=p.tweaks.map(function(t){return '<span class="gc-tweak">'+t+'</span>';}).join('');
-      return '<div class="gc" id="gc-'+p.id+'">'+
-        '<div class="det-pill">🟢 EN JEU</div>'+
-        '<div class="gc-ico-wrap" style="background:'+logo.bg+'">'+
-          '<svg width="24" height="24" fill="none" stroke="'+logo.stroke+'" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24">'+logo.svg+'</svg>'+
-        '</div>'+
-        '<div class="gc-name">'+p.name+'</div>'+
-        '<div class="gc-desc">'+p.description+'</div>'+
-        '<div class="gc-tweaks">'+tw+'</div>'+
-        '<button class="gc-btn" onclick="applyGame(\''+p.id+'\',this)"><span>⚡ OPTIMISER</span></button>'+
-      '</div>';
-    }).join('');
-  });
-}
-
-function applyGame(id,btn){
-  btn.querySelector('span').textContent='⏳...';btn.disabled=true;
-  window.pywebview.api.apply_game_profile(id).then(function(r){
-    btn.disabled=false;
-    if(r&&r.success){btn.querySelector('span').textContent='✅ Appliqué';btn.classList.add('done');document.getElementById('gc-'+id).classList.add('applied');showToast('Profil appliqué !','success');setTimeout(function(){btn.querySelector('span').textContent='⚡ OPTIMISER';btn.classList.remove('done');},3000);}
-    else{btn.querySelector('span').textContent='⚡ OPTIMISER';showToast((r&&r.message)||'Erreur','error');}
-  });
-}
-
-// ── Checkup ──────────────────────────────────────────────────────
-function toggleCU(id,card){
-  var i=_selCU.indexOf(id),ch=card.querySelector('.cu-chk');
-  if(i>-1){_selCU.splice(i,1);card.classList.remove('sel');ch.textContent='';}
-  else{_selCU.push(id);card.classList.add('sel');ch.textContent='✓';}
-}
-function doCheckup(){
-  if(_selCU.length===0){showToast('Sélectionne au moins une tâche','error');return;}
-  var b=document.getElementById('cu-btn');b.disabled=true;b.querySelector('span').textContent='⏳ Check-up...';
-  window.pywebview.api.run_checkup(_selCU).then(function(r){
-    b.disabled=false;b.querySelector('span').textContent='🩺 LANCER LE CHECK-UP';
-    if(r&&r.success){document.getElementById('cu-result').textContent='✓ '+r.message;showToast('Check-up terminé !','success');}
-    else showToast('Erreur','error');
-  });
-}
-function toggleAuto(){
-  var b=document.getElementById('auto-btn'),iv=parseInt(document.getElementById('auto-int').value);
-  if(!_autoOn){
-    window.pywebview.api.start_auto_clean(iv).then(function(r){
-      if(r&&r.success){_autoOn=true;b.querySelector('span').textContent='ARRÊTER';b.style.background='linear-gradient(135deg,#065f46,#059669)';document.getElementById('auto-status').textContent='✓ Actif — nettoyage toutes les '+iv+' min';showToast('Nettoyage auto activé !','success');}
-    });
-  }else{
-    window.pywebview.api.stop_auto_clean().then(function(){_autoOn=false;b.querySelector('span').textContent='ACTIVER';b.style.background='';document.getElementById('auto-status').textContent='';});
-  }
-}
-
-// ── Overclock ────────────────────────────────────────────────────
-function loadOCInfo(){
-  window.pywebview.api.get_gpu_oc_info().then(function(i){
-    if(!i)return;
-    document.getElementById('oc-gpu').textContent=i.name;
-    document.getElementById('oc-temp').textContent=i.temperature>0?i.temperature+'°':'—';
-    document.getElementById('oc-power').textContent=i.power_limit>0?Math.round(i.power_limit)+'W':'—';
-    document.getElementById('oc-fan').textContent=i.fan_speed>0?i.fan_speed+'%':'—';
-  });
-  window.pywebview.api.get_oc_presets().then(function(presets){
-    if(!presets)return;
-    var icons={balanced:'⚖️',performance:'🚀',cool:'❄️'};
-    document.getElementById('oc-presets').innerHTML=presets.map(function(p){
-      return '<div class="oc-card" id="oc-'+p.id+'" onclick="selOC(\''+p.id+'\')">'+(icons[p.id]||'⚡')+'<div class="oc-name">'+p.name+'</div><div class="oc-desc">'+p.description+'</div><div class="oc-pw">Power Limit: '+p.power_limit+'% TDP</div><button class="oc-btn" onclick="event.stopPropagation();applyOC(\''+p.id+'\')"><span>APPLIQUER</span></button></div>';
-    }).join('');
-  });
-}
-function selOC(id){document.querySelectorAll('.oc-card').forEach(function(c){c.classList.remove('sel');});document.getElementById('oc-'+id).classList.add('sel');}
-function applyOC(id){_pendingOC=id;window.pywebview.api.get_oc_warning().then(function(r){document.getElementById('oc-modal-d').textContent=r.message;document.getElementById('oc-modal').classList.add('show');});}
-function closeOCModal(){document.getElementById('oc-modal').classList.remove('show');_pendingOC=null;}
-function confirmOC(){
-  document.getElementById('oc-modal').classList.remove('show');
-  if(!_pendingOC)return;
-  var id=_pendingOC;_pendingOC=null;
-  window.pywebview.api.apply_oc_preset(id,true).then(function(r){
-    if(r&&r.success){showToast('Preset '+r.preset+' appliqué !','success');loadOCInfo();}
-    else showToast((r&&r.message)||'Erreur','error');
-  });
-}
-function resetOC(){window.pywebview.api.reset_oc().then(function(r){if(r&&r.success){showToast('GPU remis par défaut','success');loadOCInfo();}});}
-
-// ── Optimisations style FPS Doctor ───────────────────────────────
-function loadOpts(){
-  window.pywebview.api.get_optimizations().then(function(opts){
-    if(!opts)return;
-    opts.forEach(function(o){optStates[o.id]=o.enabled;});
-    showOptTab(_currentOptTab,document.querySelector('.opt-tab.active'));
-  });
-}
-
-function showOptTab(tab,btn){
-  _currentOptTab=tab;
-  document.querySelectorAll('.opt-tab').forEach(function(b){b.classList.remove('active');});
-  if(btn)btn.classList.add('active');
-  var ids=OPT_CATS[tab]||[];
-  window.pywebview.api.get_optimizations().then(function(opts){
-    if(!opts)return;
-    var filtered=opts.filter(function(o){return ids.indexOf(o.id)>-1;});
-    var n=Object.values(optStates).filter(Boolean).length;
-    document.getElementById('opt-list').innerHTML=filtered.map(function(o){
-      var info=OPT_ICONS[o.id]||{ico:'rgba(139,92,246,0.09)',stroke:'#a78bfa',path:'M12 2L2 7l10 5 10-5-10-5z'};
-      var tagColor=o.requires_admin?'background:rgba(251,191,36,0.08);color:var(--amber);border:1px solid rgba(251,191,36,0.15);':'background:rgba(52,211,153,0.06);color:var(--green);border:1px solid rgba(52,211,153,0.12);';
-      var tagTxt=o.requires_admin?'ADMIN':'SAFE';
-      return '<div class="opt-card">'+
-        '<div class="opt-card-head">'+
-          '<div class="opt-card-ico" style="background:'+info.ico+'">'+
-            '<svg width="18" height="18" fill="none" stroke="'+info.stroke+'" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" viewBox="0 0 24 24"><path d="'+info.path+'"/></svg>'+
-          '</div>'+
-          '<div class="toggle '+(o.enabled?'on':'')+'" id="tog-'+o.id+'" onclick="toggleOpt(\''+o.id+'\')"></div>'+
-        '</div>'+
-        '<div class="opt-card-name">'+o.name+'</div>'+
-        '<div class="opt-card-desc">'+o.description+'</div>'+
-        '<span class="opt-card-tag" style="'+tagColor+'">'+tagTxt+'</span>'+
-      '</div>';
-    }).join('');
-  });
-}
-
-function toggleOpt(id){
-  var tog=document.getElementById('tog-'+id),ns=!optStates[id];
-  window.pywebview.api.toggle_optimization(id,ns).then(function(r){
-    if(r&&r.success){optStates[id]=ns;tog.classList.toggle('on',ns);showToast((ns?'✓ Activé : ':'✗ Désactivé : ')+id.replace(/_/g,' '),'');}
-    else showToast((r&&r.message)||'Erreur','error');
-  });
-}
-
-// ── Boost ────────────────────────────────────────────────────────
-function doBoost(){
-  var b=document.querySelector('.boost-btn');b.querySelector('span').textContent='⏳ APPLICATION...';b.disabled=true;
-  window.pywebview.api.boost_gaming().then(function(r){
-    b.disabled=false;
-    if(r&&r.success){b.querySelector('span').textContent='✅ BOOST ACTIF';document.getElementById('boost-result').textContent='✓ '+r.applied+'/'+r.total+' optimisations';showToast('Boost activé !','success');setTimeout(function(){b.querySelector('span').textContent='⚡ BOOST GAMING';},5000);}
-    else{b.querySelector('span').textContent='⚡ BOOST GAMING';showToast('Erreur','error');}
-  });
-}
-
-// ── Processes ────────────────────────────────────────────────────
-function loadProcs(){
-  window.pywebview.api.get_processes().then(function(procs){
-    var c=document.getElementById('proc-list');
-    if(!procs||procs.length===0){c.innerHTML='<div style="color:var(--muted);text-align:center;padding:2rem;">✓ Aucun processus inutile détecté</div>';return;}
-    c.innerHTML=procs.map(function(p){return '<div class="pi"><span class="pi-name">'+p.name+'</span><span class="pi-mem">'+p.memory_mb+' MB</span><button class="pi-kill" onclick="killProc(\''+p.name+'\',this)">TERMINER</button></div>';}).join('');
-  });
-}
-function killProc(name,btn){btn.disabled=true;btn.textContent='...';window.pywebview.api.kill_process(name).then(function(ok){if(ok){btn.textContent='TERMINÉ';showToast(name+' terminé.','success');}else{btn.disabled=false;btn.textContent='TERMINER';showToast('Impossible','error');}});}
-function killAll(){document.querySelectorAll('.pi-kill:not(:disabled)').forEach(function(b){killProc(b.closest('.pi').querySelector('.pi-name').textContent,b);});}
-
-// ── Navigation ───────────────────────────────────────────────────
-function showPage(name,btn){
-  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});
-  document.querySelectorAll('.sbi').forEach(function(b){b.classList.remove('active');});
-  document.getElementById('page-'+name).classList.add('active');
-  if(btn)btn.classList.add('active');
-  if(name==='processes')loadProcs();
-  if(name==='games')loadGames();
-  if(name==='gpu')loadGpuInfo();
-  if(name==='network')loadNetStats();
-  if(name==='overclock')loadOCInfo();
-  if(name==='optimizer')loadOpts();
-}
-</script>
-</body>
-</html>
+    else{b.disabled=false;b.textContent='METTRE À JOUR';p.style.display='none';showToa
