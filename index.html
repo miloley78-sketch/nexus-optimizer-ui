@@ -2,7 +2,6 @@
 <html lang="fr">
 <head>
 <meta charset="UTF-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>Nexus Optimizer</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Exo+2:wght@300;400;500;600;700&display=swap');
@@ -11,553 +10,567 @@
   --bg:#07050e;--bg2:#0c0918;--bg3:#110d20;--bg4:#160f28;
   --p:#8b5cf6;--pl:#a78bfa;--pd:#6d28d9;--ps:#4c1d95;
   --text:#ede9fe;--muted:#7c6f9a;--dim:#4a4065;
-  --border:rgba(139,92,246,0.18);--borderh:rgba(167,139,250,0.4);
+  --border:rgba(139,92,246,0.15);--borderh:rgba(167,139,250,0.4);
   --green:#34d399;--amber:#fbbf24;--red:#f87171;--blue:#60a5fa;
 }
-body{background:var(--bg);font-family:'Exo 2',sans-serif;color:var(--text);overflow:hidden;user-select:none;}
+body{background:var(--bg);font-family:'Exo 2',sans-serif;color:var(--text);overflow:hidden;user-select:none;height:100vh;}
 
 /* ── Animated BG ── */
-.bg-mesh{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:0;}
-.bg-mesh::before{content:'';position:absolute;width:900px;height:900px;border-radius:50%;background:radial-gradient(circle,rgba(109,40,217,0.1)0%,transparent 65%);top:-300px;left:-200px;animation:mesh1 14s ease-in-out infinite;}
-.bg-mesh::after{content:'';position:absolute;width:700px;height:700px;border-radius:50%;background:radial-gradient(circle,rgba(139,92,246,0.07)0%,transparent 65%);bottom:-200px;right:-150px;animation:mesh2 18s ease-in-out infinite;}
-@keyframes mesh1{0%,100%{transform:translate(0,0);}50%{transform:translate(120px,60px);}}
-@keyframes mesh2{0%,100%{transform:translate(0,0);}50%{transform:translate(-80px,-50px);}}
-.grid-bg{position:fixed;inset:0;pointer-events:none;z-index:0;background-image:linear-gradient(rgba(139,92,246,0.025)1px,transparent 1px),linear-gradient(90deg,rgba(139,92,246,0.025)1px,transparent 1px);background-size:50px 50px;}
+.bg-fx{position:fixed;inset:0;pointer-events:none;z-index:0;overflow:hidden;}
+.bg-fx::before{content:'';position:absolute;width:1000px;height:600px;border-radius:50%;background:radial-gradient(ellipse,rgba(109,40,217,0.09)0%,transparent 70%);top:-200px;left:-200px;animation:fx1 16s ease-in-out infinite;}
+.bg-fx::after{content:'';position:absolute;width:800px;height:500px;border-radius:50%;background:radial-gradient(ellipse,rgba(139,92,246,0.06)0%,transparent 70%);bottom:-150px;right:-100px;animation:fx2 20s ease-in-out infinite;}
+@keyframes fx1{0%,100%{transform:translate(0,0);}50%{transform:translate(150px,80px);}}
+@keyframes fx2{0%,100%{transform:translate(0,0);}50%{transform:translate(-100px,-60px);}}
+.bg-grid{position:fixed;inset:0;pointer-events:none;z-index:0;background-image:linear-gradient(rgba(139,92,246,0.02)1px,transparent 1px),linear-gradient(90deg,rgba(139,92,246,0.02)1px,transparent 1px);background-size:60px 60px;}
+
+/* ── Auth ── */
+.auth-wrap{display:none;flex-direction:column;align-items:center;justify-content:center;height:calc(100vh - 0px);padding:2rem;position:relative;z-index:1;}
+.auth-wrap.active{display:flex;}
+.auth-logo{text-align:center;margin-bottom:1.25rem;}
+.auth-logo-icon{width:72px;height:72px;margin:0 auto .75rem;animation:logo-glow 4s ease-in-out infinite;}
+.auth-logo-icon svg{width:72px;height:72px;}
+@keyframes logo-glow{0%,100%{filter:drop-shadow(0 0 8px rgba(139,92,246,0.4));}50%{filter:drop-shadow(0 0 20px rgba(167,139,250,0.7));}}
+.auth-name{font-family:'Rajdhani',sans-serif;font-size:32px;font-weight:700;letter-spacing:6px;}
+.auth-name span{background:linear-gradient(135deg,#a78bfa,#c4b5fd);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.auth-sub{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-top:4px;}
+.auth-card{background:rgba(12,9,24,0.96);border:1px solid var(--border);border-radius:22px;padding:1.5rem;width:100%;max-width:400px;backdrop-filter:blur(24px);}
+.auth-card-title{font-family:'Rajdhani',sans-serif;font-size:13px;letter-spacing:3px;text-transform:uppercase;color:var(--pl);margin-bottom:1rem;text-align:center;}
+.hwid-row{display:flex;align-items:center;gap:8px;background:rgba(139,92,246,0.05);border:1px solid rgba(139,92,246,0.1);border-radius:10px;padding:8px 12px;margin-bottom:.7rem;}
+.hwid-lbl{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:2px;}
+.hwid-val{font-family:'Rajdhani',sans-serif;font-size:11px;color:var(--pl);}
+.fg{margin-bottom:.6rem;}
+.fl{display:block;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
+.fi{width:100%;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:10px;padding:10px 14px;font-family:'Exo 2',sans-serif;font-size:13px;color:var(--text);outline:none;transition:all .2s;}
+.fi:focus{border-color:var(--pl);box-shadow:0 0 0 3px rgba(139,92,246,0.08);}
+.fi::placeholder{color:var(--dim);}
+.bp{width:100%;background:linear-gradient(135deg,#4c1d95,#6d28d9,#8b5cf6);border:none;border-radius:12px;padding:12px;font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;letter-spacing:3px;color:#fff;cursor:pointer;transition:all .25s;margin-top:.4rem;position:relative;overflow:hidden;}
+.bp::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,#6d28d9,#a78bfa);opacity:0;transition:opacity .25s;}
+.bp:hover::after{opacity:1;}
+.bp:hover{box-shadow:0 6px 24px rgba(109,40,217,0.45);transform:translateY(-1px);}
+.bp:disabled{opacity:.5;cursor:default;transform:none;}
+.bp span{position:relative;z-index:1;}
+.bg{width:100%;background:transparent;border:1px solid var(--border);border-radius:12px;padding:10px;font-family:'Rajdhani',sans-serif;font-size:12px;letter-spacing:2px;color:var(--muted);cursor:pointer;transition:all .2s;margin-top:.35rem;}
+.bg:hover{border-color:var(--borderh);color:var(--text);}
+.err-b{background:rgba(248,113,113,0.05);border:1px solid rgba(248,113,113,0.18);border-radius:10px;padding:8px 12px;font-size:11px;color:var(--red);margin-bottom:.7rem;display:none;}
+.ok-b{background:rgba(52,211,153,0.05);border:1px solid rgba(52,211,153,0.18);border-radius:10px;padding:8px 12px;font-size:11px;color:var(--green);margin-bottom:.7rem;display:none;}
+.auth-lnk{text-align:center;font-size:11px;color:var(--muted);margin-top:.7rem;}
+.auth-lnk a{color:var(--pl);text-decoration:none;cursor:pointer;}
+.div{display:flex;align-items:center;gap:10px;margin:.6rem 0;color:var(--dim);font-size:10px;}
+.div::before,.div::after{content:'';flex:1;height:1px;background:var(--border);}
+
+/* ── App shell ── */
+#app{display:none;flex-direction:column;height:100vh;position:relative;z-index:1;}
 
 /* ── Titlebar ── */
-#titlebar{position:relative;z-index:10;height:48px;background:rgba(7,5,14,0.97);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 20px;-webkit-app-region:drag;}
-.tb-brand{display:flex;align-items:center;gap:10px;}
-.tb-logo svg{width:28px;height:28px;filter:drop-shadow(0 0 8px rgba(139,92,246,0.5));animation:logo-glow 4s ease-in-out infinite;}
-@keyframes logo-glow{0%,100%{filter:drop-shadow(0 0 6px rgba(139,92,246,0.4));}50%{filter:drop-shadow(0 0 16px rgba(167,139,250,0.7));}}
-.tb-name{font-family:'Rajdhani',sans-serif;font-size:19px;font-weight:700;letter-spacing:4px;}
+#tb{height:46px;background:rgba(7,5,14,0.98);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 18px;-webkit-app-region:drag;flex-shrink:0;}
+.tb-left{display:flex;align-items:center;gap:10px;}
+.tb-logo svg{width:26px;height:26px;animation:logo-glow 4s ease-in-out infinite;}
+.tb-name{font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:700;letter-spacing:4px;}
 .tb-name span{background:linear-gradient(135deg,#a78bfa,#c4b5fd);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
-.tb-tag{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--dim);margin-left:2px;}
-.tb-right{display:flex;align-items:center;gap:10px;-webkit-app-region:no-drag;}
-.tb-user-pill{display:flex;align-items:center;gap:7px;background:rgba(139,92,246,0.08);border:1px solid var(--border);border-radius:20px;padding:3px 12px 3px 4px;}
-.tb-avatar{width:22px;height:22px;border-radius:50%;background:linear-gradient(135deg,#6d28d9,#8b5cf6);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;}
-.tb-uname{font-size:11px;color:var(--text);font-weight:500;letter-spacing:.5px;}
-.tb-btns{display:flex;gap:4px;}
+.tb-v{font-size:9px;letter-spacing:2px;color:var(--dim);margin-left:2px;}
+.tb-right{display:flex;align-items:center;gap:8px;-webkit-app-region:no-drag;}
+.tb-pill{display:flex;align-items:center;gap:6px;background:rgba(139,92,246,0.07);border:1px solid var(--border);border-radius:18px;padding:3px 12px 3px 4px;}
+.tb-av{width:22px;height:22px;border-radius:50%;background:linear-gradient(135deg,#6d28d9,#8b5cf6);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;}
+.tb-un{font-size:11px;color:var(--text);font-weight:500;}
 .tb-btn{width:28px;height:28px;border-radius:6px;border:1px solid var(--border);background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .15s;}
 .tb-btn:hover{background:rgba(139,92,246,0.12);border-color:var(--borderh);}
 .tb-btn svg{width:12px;height:12px;stroke:#7c6f9a;fill:none;stroke-width:2;stroke-linecap:round;}
-.tb-btn.close:hover{background:rgba(248,113,113,0.12);border-color:rgba(248,113,113,0.35);}
-.tb-btn.close:hover svg{stroke:var(--red);}
+.tb-btn.cl:hover{background:rgba(248,113,113,0.1);border-color:rgba(248,113,113,0.3);}
+.tb-btn.cl:hover svg{stroke:var(--red);}
 
-/* ── Auth screens ── */
-.auth-wrap{display:none;flex-direction:column;align-items:center;justify-content:center;min-height:calc(100vh - 48px);padding:2rem;position:relative;z-index:1;}
-.auth-wrap.active{display:flex;}
-.auth-logo{text-align:center;margin-bottom:1.5rem;}
-.auth-hex{width:70px;height:70px;margin:0 auto .75rem;display:flex;align-items:center;justify-content:center;animation:logo-glow 4s ease-in-out infinite;}
-.auth-hex svg{width:70px;height:70px;}
-.auth-title-big{font-family:'Rajdhani',sans-serif;font-size:30px;font-weight:700;letter-spacing:6px;}
-.auth-title-big span{background:linear-gradient(135deg,#a78bfa,#c4b5fd);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
-.auth-sub{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--muted);margin-top:4px;}
-.auth-card{background:rgba(12,9,24,0.95);border:1px solid var(--border);border-radius:20px;padding:1.5rem;width:100%;max-width:400px;backdrop-filter:blur(20px);}
-.auth-card-title{font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:600;letter-spacing:3px;text-transform:uppercase;color:var(--pl);margin-bottom:1rem;text-align:center;}
-.hwid-row{display:flex;align-items:center;gap:8px;background:rgba(139,92,246,0.06);border:1px solid rgba(139,92,246,0.12);border-radius:10px;padding:8px 12px;margin-bottom:.75rem;}
-.hwid-row span{font-size:16px;}
-.hwid-lbl{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:2px;}
-.hwid-val{font-family:'Rajdhani',sans-serif;font-size:11px;color:var(--pl);}
-.f-group{margin-bottom:.65rem;}
-.f-lbl{display:block;font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:6px;}
-.f-inp{width:100%;background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:10px;padding:10px 14px;font-family:'Exo 2',sans-serif;font-size:13px;color:var(--text);outline:none;transition:all .2s;}
-.f-inp:focus{border-color:var(--pl);box-shadow:0 0 0 3px rgba(139,92,246,0.08);}
-.f-inp::placeholder{color:var(--dim);}
-.btn-primary{width:100%;background:linear-gradient(135deg,#4c1d95,#6d28d9,#8b5cf6);border:none;border-radius:12px;padding:12px;font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:700;letter-spacing:3px;color:#fff;cursor:pointer;transition:all .25s;margin-top:.5rem;position:relative;overflow:hidden;}
-.btn-primary::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,#6d28d9,#a78bfa);opacity:0;transition:opacity .25s;}
-.btn-primary:hover::before{opacity:1;}
-.btn-primary:hover{box-shadow:0 6px 24px rgba(109,40,217,0.45);transform:translateY(-1px);}
-.btn-primary:disabled{opacity:.5;cursor:default;transform:none;}
-.btn-primary span{position:relative;z-index:1;}
-.btn-ghost{width:100%;background:transparent;border:1px solid var(--border);border-radius:12px;padding:10px;font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:600;letter-spacing:2px;color:var(--muted);cursor:pointer;transition:all .2s;margin-top:.4rem;}
-.btn-ghost:hover{border-color:var(--borderh);color:var(--text);}
-.err-msg{background:rgba(248,113,113,0.06);border:1px solid rgba(248,113,113,0.2);border-radius:10px;padding:8px 12px;font-size:11px;color:var(--red);margin-bottom:.75rem;display:none;}
-.ok-msg{background:rgba(52,211,153,0.06);border:1px solid rgba(52,211,153,0.2);border-radius:10px;padding:8px 12px;font-size:11px;color:var(--green);margin-bottom:.75rem;display:none;}
-.auth-link{text-align:center;font-size:11px;color:var(--muted);margin-top:.75rem;}
-.auth-link a{color:var(--pl);text-decoration:none;cursor:pointer;}
-.divider{display:flex;align-items:center;gap:10px;margin:.65rem 0;color:var(--dim);font-size:10px;}
-.divider::before,.divider::after{content:'';flex:1;height:1px;background:var(--border);}
+/* ── Update banner ── */
+#upd-bar{background:rgba(29,78,216,0.15);border-bottom:1px solid rgba(59,130,246,0.25);padding:8px 20px;display:none;align-items:center;justify-content:space-between;flex-shrink:0;}
+#upd-bar.show{display:flex;}
+.upd-v{font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;color:#93c5fd;}
+.upd-cl{font-size:10px;color:rgba(147,197,253,0.6);}
+.upd-btns{display:flex;gap:8px;}
+.upd-now{background:linear-gradient(135deg,#1d4ed8,#3b82f6);border:none;border-radius:8px;padding:6px 16px;font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;color:#fff;cursor:pointer;}
+.upd-later{background:transparent;border:1px solid rgba(255,255,255,0.12);border-radius:8px;padding:6px 10px;font-size:10px;color:rgba(255,255,255,0.4);cursor:pointer;}
+.upd-prog{height:3px;background:rgba(59,130,246,0.15);border-radius:2px;margin-top:4px;overflow:hidden;display:none;}
+.upd-prog-f{height:100%;background:#3b82f6;border-radius:2px;transition:width .3s;width:0%;}
 
-/* ── Dashboard ── */
-#dash{display:none;flex-direction:row;height:calc(100vh - 48px);position:relative;z-index:1;}
+/* ── Main layout ── */
+#main-layout{display:flex;flex:1;overflow:hidden;}
 
 /* ── Sidebar ── */
-.sidebar{width:218px;background:rgba(7,5,14,0.98);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:.75rem 0;flex-shrink:0;overflow-y:auto;}
-.sb-header{padding:0 12px;margin-bottom:1rem;}
-.sb-status{display:flex;align-items:center;gap:8px;background:rgba(52,211,153,0.05);border:1px solid rgba(52,211,153,0.12);border-radius:10px;padding:7px 12px;}
-.sb-dot{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 8px var(--green);animation:sb-pulse 2s infinite;}
-@keyframes sb-pulse{0%,100%{opacity:1;}50%{opacity:.4;}}
-.sb-status-txt{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--green);}
-.sb-section{padding:0 8px;margin-bottom:.5rem;}
-.sb-lbl{font-size:8px;letter-spacing:3px;text-transform:uppercase;color:var(--dim);padding:0 8px;margin-bottom:5px;margin-top:4px;}
-.sb-item{display:flex;align-items:center;gap:9px;width:100%;background:transparent;border:none;border-radius:10px;padding:8px 8px;font-family:'Exo 2',sans-serif;font-size:12px;color:var(--muted);cursor:pointer;transition:all .15s;text-align:left;position:relative;}
-.sb-item:hover{background:rgba(139,92,246,0.07);color:var(--text);}
-.sb-item.active{background:rgba(139,92,246,0.12);color:#fff;}
-.sb-item.active::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:3px;height:20px;background:linear-gradient(180deg,#a78bfa,#6d28d9);border-radius:0 3px 3px 0;}
-.sb-icon{width:30px;height:30px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0;background:rgba(139,92,246,0.05);transition:all .15s;}
-.sb-item.active .sb-icon,.sb-item:hover .sb-icon{background:rgba(139,92,246,0.15);}
-.sb-badge{margin-left:auto;font-size:9px;background:rgba(139,92,246,0.15);color:var(--pl);border:1px solid rgba(139,92,246,0.25);border-radius:8px;padding:1px 6px;}
-.sb-badge.g{background:rgba(52,211,153,0.1);color:var(--green);border-color:rgba(52,211,153,0.2);}
-.sb-footer{margin-top:auto;padding:0 8px;border-top:1px solid var(--border);padding-top:8px;}
-.sb-ver{display:flex;align-items:center;justify-content:space-between;padding:5px 8px;font-size:10px;color:var(--dim);}
+#sidebar{width:64px;background:rgba(7,5,14,0.98);border-right:1px solid var(--border);display:flex;flex-direction:column;align-items:center;padding:.75rem 0;gap:4px;flex-shrink:0;transition:width .2s;}
+.sb-logo-mini{font-size:18px;margin-bottom:.5rem;}
+.sb-nav-btn{width:44px;height:44px;border-radius:12px;border:none;background:transparent;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:18px;transition:all .15s;position:relative;}
+.sb-nav-btn:hover{background:rgba(139,92,246,0.1);}
+.sb-nav-btn.active{background:rgba(139,92,246,0.18);}
+.sb-nav-btn.active::before{content:'';position:absolute;left:0;top:50%;transform:translateY(-50%);width:3px;height:22px;background:linear-gradient(180deg,#a78bfa,#6d28d9);border-radius:0 3px 3px 0;}
+.sb-nav-btn title{display:none;}
+.sb-sep{width:28px;height:1px;background:var(--border);margin:.25rem 0;}
+.sb-footer{margin-top:auto;display:flex;flex-direction:column;align-items:center;gap:4px;}
+.sb-dot-v{width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);animation:pulse-g 2s infinite;}
+@keyframes pulse-g{0%,100%{opacity:1;}50%{opacity:.3;}}
 
-/* ── Main ── */
-.main{flex:1;overflow-y:auto;padding:18px;scrollbar-width:thin;scrollbar-color:var(--ps) transparent;}
+/* ── Content ── */
+#content{flex:1;overflow-y:auto;scrollbar-width:thin;scrollbar-color:var(--ps) transparent;}
 
-/* ── Stats ── */
-.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px;}
-.sc{background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:13px 15px;position:relative;overflow:hidden;transition:all .2s;}
-.sc::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--ac,#8b5cf6),transparent);opacity:.6;}
+/* ── Page: Home ── */
+.home-header{padding:24px 28px 0;display:flex;align-items:flex-start;justify-content:space-between;}
+.home-greeting{font-family:'Rajdhani',sans-serif;font-size:26px;font-weight:700;color:#fff;margin-bottom:4px;}
+.home-greeting span{background:linear-gradient(135deg,#a78bfa,#c4b5fd);-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.home-sub{font-size:12px;color:var(--muted);}
+.home-status{display:flex;align-items:center;gap:8px;background:rgba(52,211,153,0.06);border:1px solid rgba(52,211,153,0.15);border-radius:12px;padding:8px 14px;}
+.home-dot{width:8px;height:8px;border-radius:50%;background:var(--green);box-shadow:0 0 10px var(--green);animation:pulse-g 2s infinite;}
+.home-status-txt{font-size:11px;color:var(--green);letter-spacing:1px;font-weight:500;}
+
+/* ── Stats cards ── */
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;padding:16px 28px;}
+.sc{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:14px 16px;position:relative;overflow:hidden;transition:all .2s;cursor:default;}
+.sc::after{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--ac,#8b5cf6),transparent);opacity:.5;}
 .sc:hover{border-color:var(--borderh);transform:translateY(-1px);}
-.sc-lbl{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:7px;}
-.sc-val{font-family:'Rajdhani',sans-serif;font-size:26px;font-weight:700;line-height:1;color:var(--ac,var(--pl));}
+.sc-lbl{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-bottom:8px;display:flex;align-items:center;gap:5px;}
+.sc-val{font-family:'Rajdhani',sans-serif;font-size:28px;font-weight:700;color:var(--ac,var(--pl));line-height:1;}
 .sc-sub{font-size:10px;color:var(--dim);margin-top:3px;}
-.sc-bar{height:3px;background:rgba(255,255,255,0.04);border-radius:2px;margin-top:8px;overflow:hidden;}
-.sc-bar-f{height:100%;border-radius:2px;transition:width .8s ease;}
+.sc-bar{height:3px;background:rgba(255,255,255,0.04);border-radius:2px;margin-top:10px;overflow:hidden;}
+.sc-bf{height:100%;border-radius:2px;transition:width .8s ease;}
 
-/* ── Panels ── */
-.panel{background:var(--bg2);border:1px solid var(--border);border-radius:16px;padding:16px;margin-bottom:12px;transition:border-color .2s;}
-.panel:hover{border-color:rgba(139,92,246,0.28);}
-.panel-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
-.ptitle{font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;color:#fff;display:flex;align-items:center;gap:7px;}
-.badge{font-size:9px;letter-spacing:1px;text-transform:uppercase;padding:3px 9px;border-radius:20px;background:rgba(139,92,246,0.1);color:var(--pl);border:1px solid rgba(139,92,246,0.2);}
-.badge.g{background:rgba(52,211,153,0.07);color:var(--green);border-color:rgba(52,211,153,0.18);}
-.badge.a{background:rgba(251,191,36,0.07);color:var(--amber);border-color:rgba(251,191,36,0.18);}
-.badge.r{background:rgba(248,113,113,0.07);color:var(--red);border-color:rgba(248,113,113,0.18);}
-.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
-.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
+/* ── Chart ── */
+.chart-section{padding:0 28px 16px;display:grid;grid-template-columns:1fr 280px;gap:14px;}
+.chart-panel{background:var(--bg2);border:1px solid var(--border);border-radius:18px;padding:18px;position:relative;}
+.chart-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.chart-title{font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:#fff;}
+.chart-legend{display:flex;gap:14px;}
+.chart-leg-item{display:flex;align-items:center;gap:5px;font-size:10px;color:var(--muted);}
+.chart-leg-dot{width:8px;height:3px;border-radius:2px;}
+canvas#chart{width:100%;height:140px;}
+.quick-panel{background:var(--bg2);border:1px solid var(--border);border-radius:18px;padding:18px;display:flex;flex-direction:column;gap:10px;}
+.quick-title{font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:#fff;margin-bottom:4px;}
+.quick-btn{display:flex;align-items:center;gap:10px;background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:10px 12px;cursor:pointer;transition:all .2s;text-decoration:none;}
+.quick-btn:hover{border-color:var(--borderh);transform:translateX(3px);}
+.quick-btn-icon{width:32px;height:32px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0;}
+.quick-btn-txt{font-size:12px;font-weight:500;color:var(--text);}
+.quick-btn-sub{font-size:10px;color:var(--muted);}
+.quick-boost{width:100%;margin-top:auto;background:linear-gradient(135deg,#4c1d95,#6d28d9,#8b5cf6);border:none;border-radius:12px;padding:12px;font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;letter-spacing:3px;color:#fff;cursor:pointer;position:relative;overflow:hidden;transition:all .25s;}
+.quick-boost::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,#6d28d9,#a78bfa);opacity:0;transition:opacity .25s;}
+.quick-boost:hover::after{opacity:1;}
+.quick-boost:hover{box-shadow:0 6px 24px rgba(109,40,217,0.5);transform:translateY(-1px);}
+.quick-boost span{position:relative;z-index:1;}
 
-/* ── Bars ── */
-.bw{margin-bottom:10px;}
-.bh{display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-bottom:5px;}
-.bh b{color:var(--text);font-weight:500;}
-.bt{height:5px;background:rgba(255,255,255,0.04);border-radius:3px;overflow:hidden;}
-.bf{height:100%;border-radius:3px;transition:width .8s ease;}
-
-/* ── Toggle ── */
-.opt-item{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(139,92,246,0.06);}
-.opt-item:last-child{border-bottom:none;}
-.opt-name{font-size:12px;font-weight:500;color:var(--text);margin-bottom:2px;}
-.opt-desc{font-size:10px;color:var(--muted);}
-.toggle{width:42px;height:22px;background:rgba(255,255,255,0.04);border:1px solid rgba(139,92,246,0.15);border-radius:11px;cursor:pointer;position:relative;transition:all .3s;flex-shrink:0;margin-left:12px;}
-.toggle.on{background:linear-gradient(135deg,#6d28d9,#8b5cf6);border-color:#8b5cf6;box-shadow:0 0 10px rgba(139,92,246,0.35);}
-.toggle::after{content:'';position:absolute;width:16px;height:16px;border-radius:50%;background:#4a4065;top:2px;left:2px;transition:all .3s;box-shadow:0 1px 3px rgba(0,0,0,0.4);}
-.toggle.on::after{left:22px;background:#fff;}
-
-/* ── Boost btn ── */
-.boost-btn{width:100%;margin-top:12px;background:linear-gradient(135deg,#4c1d95,#6d28d9,#8b5cf6);border:none;border-radius:12px;padding:13px;font-family:'Rajdhani',sans-serif;font-size:14px;font-weight:700;letter-spacing:3px;color:#fff;cursor:pointer;position:relative;overflow:hidden;transition:all .25s;}
-.boost-btn::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,#6d28d9,#a78bfa);opacity:0;transition:opacity .25s;}
-.boost-btn:hover::before{opacity:1;}
-.boost-btn:hover{box-shadow:0 8px 28px rgba(109,40,217,0.5);transform:translateY(-2px);}
-.boost-btn:disabled{opacity:.5;cursor:default;transform:none;}
-.boost-btn.running{background:linear-gradient(135deg,#065f46,#059669);}
-.boost-btn span{position:relative;z-index:1;}
+/* ── Page générique ── */
+.page{display:none;padding:20px 28px;height:100%;}
+.page.active{display:block;}
+.page-title{font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;letter-spacing:2px;color:#fff;margin-bottom:4px;}
+.page-sub{font-size:12px;color:var(--muted);margin-bottom:18px;}
+.panel{background:var(--bg2);border:1px solid var(--border);border-radius:18px;padding:18px;margin-bottom:14px;transition:border-color .2s;}
+.panel:hover{border-color:rgba(139,92,246,0.25);}
+.ph{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;}
+.pt{font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:600;letter-spacing:2.5px;text-transform:uppercase;color:#fff;display:flex;align-items:center;gap:7px;}
+.badge{font-size:9px;letter-spacing:1px;text-transform:uppercase;padding:3px 9px;border-radius:20px;background:rgba(139,92,246,0.1);color:var(--pl);border:1px solid rgba(139,92,246,0.18);}
+.badge.g{background:rgba(52,211,153,0.07);color:var(--green);border-color:rgba(52,211,153,0.16);}
+.badge.a{background:rgba(251,191,36,0.07);color:var(--amber);border-color:rgba(251,191,36,0.16);}
+.badge.r{background:rgba(248,113,113,0.07);color:var(--red);border-color:rgba(248,113,113,0.16);}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
 
 /* ── Action cards ── */
-.ac{background:var(--bg3);border:1px solid var(--border);border-radius:14px;padding:15px;text-align:center;transition:all .2s;}
-.ac:hover{border-color:var(--borderh);transform:translateY(-2px);}
-.ac-icon{font-size:30px;margin-bottom:10px;display:block;}
-.ac-title{font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:700;letter-spacing:2px;color:#fff;margin-bottom:5px;}
-.ac-desc{font-size:10px;color:var(--muted);margin-bottom:12px;line-height:1.5;}
-.ac-result{font-size:10px;color:var(--green);margin-bottom:8px;min-height:14px;}
-.ac-btn{width:100%;background:linear-gradient(135deg,#4c1d95,#6d28d9);border:none;border-radius:9px;padding:10px;font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:700;letter-spacing:2px;color:#fff;cursor:pointer;transition:all .2s;position:relative;overflow:hidden;}
-.ac-btn::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,#6d28d9,#8b5cf6);opacity:0;transition:opacity .2s;}
-.ac-btn:hover::before{opacity:1;}
-.ac-btn:hover{transform:translateY(-1px);box-shadow:0 4px 16px rgba(109,40,217,0.4);}
-.ac-btn:disabled{opacity:.5;cursor:default;transform:none;}
-.ac-btn.done{background:linear-gradient(135deg,#065f46,#059669);}
-.ac-btn span{position:relative;z-index:1;}
+.ac{background:var(--bg3);border:1px solid var(--border);border-radius:14px;padding:16px;text-align:center;transition:all .2s;}
+.ac:hover{border-color:var(--borderh);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,0.2);}
+.ac-ico{font-size:30px;margin-bottom:10px;display:block;}
+.ac-t{font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:700;letter-spacing:2px;color:#fff;margin-bottom:5px;}
+.ac-d{font-size:10px;color:var(--muted);margin-bottom:12px;line-height:1.5;}
+.ac-r{font-size:10px;color:var(--green);margin-bottom:7px;min-height:14px;}
+.abtn{width:100%;background:linear-gradient(135deg,#4c1d95,#6d28d9);border:none;border-radius:9px;padding:10px;font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;color:#fff;cursor:pointer;transition:all .2s;position:relative;overflow:hidden;}
+.abtn::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,#6d28d9,#8b5cf6);opacity:0;transition:opacity .2s;}
+.abtn:hover::after{opacity:1;}
+.abtn:hover{transform:translateY(-1px);box-shadow:0 4px 14px rgba(109,40,217,0.4);}
+.abtn:disabled{opacity:.5;cursor:default;transform:none;}
+.abtn.done{background:linear-gradient(135deg,#065f46,#059669);}
+.abtn span{position:relative;z-index:1;}
 
-/* ── GPU info ── */
-.gpu-info-bar{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:12px 16px;margin-bottom:12px;display:flex;align-items:center;gap:12px;}
-.gpu-type-pill{font-size:9px;letter-spacing:2px;padding:2px 8px;border-radius:8px;margin-top:3px;display:inline-block;}
-.gpu-type-pill.nvidia{background:rgba(118,185,0,0.1);color:#76b900;border:1px solid rgba(118,185,0,0.2);}
-.gpu-type-pill.amd{background:rgba(237,28,36,0.1);color:#ed1c24;border:1px solid rgba(237,28,36,0.2);}
-.gpu-type-pill.unknown{background:rgba(139,92,246,0.1);color:var(--pl);border:1px solid var(--border);}
+/* ── Toggle ── */
+.opt-item{display:flex;align-items:center;justify-content:space-between;padding:10px 0;border-bottom:1px solid rgba(139,92,246,0.05);}
+.opt-item:last-child{border-bottom:none;}
+.on{font-size:12px;font-weight:500;color:var(--text);margin-bottom:2px;}
+.od{font-size:10px;color:var(--muted);}
+.toggle{width:42px;height:22px;background:rgba(255,255,255,0.04);border:1px solid rgba(139,92,246,0.12);border-radius:11px;cursor:pointer;position:relative;transition:all .3s;flex-shrink:0;margin-left:12px;}
+.toggle.on{background:linear-gradient(135deg,#6d28d9,#8b5cf6);border-color:#8b5cf6;box-shadow:0 0 10px rgba(139,92,246,0.3);}
+.toggle::after{content:'';position:absolute;width:16px;height:16px;border-radius:50%;background:#4a4065;top:2px;left:2px;transition:all .3s;}
+.toggle.on::after{left:22px;background:#fff;}
 
-/* ── Net stats ── */
+/* ── Games ── */
+.games-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;}
+.gc{background:var(--bg3);border:1px solid var(--border);border-radius:14px;padding:13px;transition:all .2s;position:relative;overflow:hidden;}
+.gc:hover{border-color:var(--borderh);transform:translateY(-2px);}
+.gc.active-game{border-color:var(--green);}
+.gc-ico{font-size:24px;margin-bottom:6px;}
+.gc-name{font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:700;color:#fff;margin-bottom:3px;}
+.gc-desc{font-size:9px;color:var(--muted);margin-bottom:7px;line-height:1.4;}
+.gc-tweaks{display:flex;flex-wrap:wrap;gap:3px;margin-bottom:7px;}
+.gc-tweak{font-size:8px;padding:1px 5px;border-radius:5px;background:rgba(139,92,246,0.1);color:var(--pl);border:1px solid rgba(139,92,246,0.15);}
+.gc-btn{width:100%;background:linear-gradient(135deg,#4c1d95,#6d28d9);border:none;border-radius:8px;padding:7px;font-family:'Rajdhani',sans-serif;font-size:10px;font-weight:700;letter-spacing:2px;color:#fff;cursor:pointer;transition:all .2s;position:relative;overflow:hidden;}
+.gc-btn::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,#6d28d9,#8b5cf6);opacity:0;transition:opacity .2s;}
+.gc-btn:hover::after{opacity:1;}
+.gc-btn span{position:relative;z-index:1;}
+.gc-btn.done{background:linear-gradient(135deg,#065f46,#059669);}
+.det-pill{position:absolute;top:8px;right:8px;font-size:8px;padding:1px 6px;border-radius:6px;background:rgba(52,211,153,0.1);color:var(--green);border:1px solid rgba(52,211,153,0.18);display:none;}
+
+/* ── Net ── */
 .net-stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px;}
 .ns{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:12px;text-align:center;}
 .ns-val{font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:var(--pl);}
-.ns-lbl{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--muted);margin-top:3px;}
+.ns-lbl{font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);margin-top:3px;}
 
-/* ── Games ── */
-.games-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
-.game-card{background:var(--bg3);border:1px solid var(--border);border-radius:14px;padding:14px;transition:all .2s;position:relative;overflow:hidden;}
-.game-card::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(139,92,246,0.04),transparent);opacity:0;transition:opacity .2s;}
-.game-card:hover::before{opacity:1;}
-.game-card:hover{border-color:var(--borderh);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,0.3);}
-.game-card.active-game{border-color:var(--green);box-shadow:0 0 16px rgba(52,211,153,0.12);}
-.game-card.applied{border-color:var(--pl);}
-.g-icon{font-size:26px;margin-bottom:8px;}
-.g-name{font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;color:#fff;margin-bottom:3px;letter-spacing:.5px;}
-.g-desc{font-size:10px;color:var(--muted);margin-bottom:8px;line-height:1.4;}
-.g-tweaks{display:flex;flex-wrap:wrap;gap:3px;margin-bottom:8px;}
-.g-tweak{font-size:8px;letter-spacing:.5px;padding:2px 6px;border-radius:6px;background:rgba(139,92,246,0.1);color:var(--pl);border:1px solid rgba(139,92,246,0.18);}
-.g-btn{width:100%;background:linear-gradient(135deg,#4c1d95,#6d28d9);border:none;border-radius:9px;padding:8px;font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;color:#fff;cursor:pointer;transition:all .2s;position:relative;overflow:hidden;}
-.g-btn::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,#6d28d9,#8b5cf6);opacity:0;transition:opacity .2s;}
-.g-btn:hover::before{opacity:1;}
-.g-btn span{position:relative;z-index:1;}
-.g-btn.done{background:linear-gradient(135deg,#065f46,#059669);}
-.detected-pill{position:absolute;top:10px;right:10px;font-size:8px;padding:2px 7px;border-radius:8px;background:rgba(52,211,153,0.1);color:var(--green);border:1px solid rgba(52,211,153,0.2);display:none;}
+/* ── GPU ── */
+.gpu-bar{display:flex;align-items:center;gap:14px;background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:12px 16px;margin-bottom:12px;}
+.gpu-t-pill{font-size:9px;letter-spacing:2px;padding:2px 8px;border-radius:7px;display:inline-block;margin-top:3px;}
+.gpu-t-pill.nvidia{background:rgba(118,185,0,0.1);color:#76b900;border:1px solid rgba(118,185,0,0.18);}
+.gpu-t-pill.amd{background:rgba(237,28,36,0.1);color:#ed1c24;border:1px solid rgba(237,28,36,0.18);}
+.gpu-t-pill.unknown{background:rgba(139,92,246,0.08);color:var(--pl);border:1px solid var(--border);}
 
 /* ── Checkup ── */
 .cu-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:12px;}
 .cu-card{background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:13px;cursor:pointer;transition:all .2s;position:relative;}
 .cu-card:hover{border-color:var(--borderh);}
-.cu-card.sel{border-color:var(--pl);background:rgba(139,92,246,0.06);}
-.cu-card.done{border-color:var(--green);}
-.cu-check{position:absolute;top:10px;right:10px;width:17px;height:17px;border-radius:5px;border:1.5px solid var(--border);background:transparent;transition:all .2s;display:flex;align-items:center;justify-content:center;font-size:11px;}
+.cu-card.sel{border-color:var(--pl);background:rgba(139,92,246,0.05);}
+.cu-check{position:absolute;top:9px;right:9px;width:16px;height:16px;border-radius:4px;border:1.5px solid var(--border);background:transparent;display:flex;align-items:center;justify-content:center;font-size:10px;transition:all .2s;}
 .cu-card.sel .cu-check{background:var(--p);border-color:var(--pl);color:#fff;}
-.cu-icon{font-size:24px;margin-bottom:6px;}
-.cu-name{font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:600;color:#fff;margin-bottom:3px;}
-.cu-desc{font-size:10px;color:var(--muted);line-height:1.4;}
-.auto-row{display:flex;align-items:center;justify-content:space-between;background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:13px 16px;margin-bottom:10px;}
-.auto-info .at{font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:600;color:#fff;margin-bottom:3px;}
-.auto-info .ad{font-size:10px;color:var(--muted);}
-.auto-controls{display:flex;align-items:center;gap:8px;}
-.sel-int{background:rgba(255,255,255,0.04);border:1px solid var(--border);border-radius:8px;padding:6px 10px;font-family:'Exo 2',sans-serif;font-size:11px;color:var(--text);outline:none;}
-.sel-int option{background:var(--bg2);}
+.cu-ico{font-size:22px;margin-bottom:6px;}
+.cu-name{font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:600;color:#fff;margin-bottom:2px;}
+.cu-desc{font-size:9px;color:var(--muted);line-height:1.4;}
+.auto-row{display:flex;align-items:center;justify-content:space-between;background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:12px 15px;margin-bottom:10px;}
+.auto-t{font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:600;color:#fff;margin-bottom:2px;}
+.auto-d{font-size:10px;color:var(--muted);}
+.sel-int{background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:7px;padding:5px 9px;font-family:'Exo 2',sans-serif;font-size:11px;color:var(--text);outline:none;margin-right:7px;}
 
 /* ── OC ── */
-.warn-box{background:rgba(251,191,36,0.05);border:1px solid rgba(251,191,36,0.2);border-radius:12px;padding:13px 16px;margin-bottom:12px;}
-.warn-title{font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;color:var(--amber);margin-bottom:6px;}
-.warn-text{font-size:10px;color:var(--muted);line-height:1.6;white-space:pre-line;}
+.warn-box{background:rgba(251,191,36,0.04);border:1px solid rgba(251,191,36,0.16);border-radius:14px;padding:13px 16px;margin-bottom:12px;}
+.warn-t{font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:700;color:var(--amber);margin-bottom:5px;}
+.warn-d{font-size:10px;color:var(--muted);line-height:1.6;white-space:pre-line;}
 .oc-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:12px;}
 .oc-card{background:var(--bg3);border:1px solid var(--border);border-radius:14px;padding:16px;text-align:center;cursor:pointer;transition:all .2s;}
 .oc-card:hover{border-color:var(--borderh);transform:translateY(-2px);}
-.oc-card.sel{border-color:var(--pl);background:rgba(139,92,246,0.08);}
-.oc-icon{font-size:28px;margin-bottom:8px;}
-.oc-name{font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:700;color:#fff;margin-bottom:5px;}
-.oc-desc{font-size:10px;color:var(--muted);margin-bottom:8px;line-height:1.5;}
-.oc-power{font-size:10px;color:var(--pl);margin-bottom:10px;}
-.oc-btn{width:100%;background:linear-gradient(135deg,#4c1d95,#6d28d9);border:none;border-radius:9px;padding:9px;font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;color:#fff;cursor:pointer;transition:all .2s;position:relative;overflow:hidden;}
-.oc-btn::before{content:'';position:absolute;inset:0;background:linear-gradient(135deg,#6d28d9,#8b5cf6);opacity:0;transition:opacity .2s;}
-.oc-btn:hover::before{opacity:1;}
+.oc-card.sel{border-color:var(--pl);background:rgba(139,92,246,0.07);}
+.oc-name{font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:700;color:#fff;margin:8px 0 5px;}
+.oc-desc{font-size:10px;color:var(--muted);margin-bottom:7px;line-height:1.4;}
+.oc-pw{font-size:10px;color:var(--pl);margin-bottom:10px;}
+.oc-btn{width:100%;background:linear-gradient(135deg,#4c1d95,#6d28d9);border:none;border-radius:8px;padding:8px;font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;color:#fff;cursor:pointer;transition:all .2s;position:relative;overflow:hidden;}
+.oc-btn::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,#6d28d9,#8b5cf6);opacity:0;transition:opacity .2s;}
+.oc-btn:hover::after{opacity:1;}
 .oc-btn span{position:relative;z-index:1;}
-.oc-btn.done{background:linear-gradient(135deg,#065f46,#059669);}
-.oc-stats-bar{display:flex;gap:16px;}
-.oc-stat{text-align:center;}
-.oc-sv{font-family:'Rajdhani',sans-serif;font-size:20px;font-weight:700;color:var(--pl);}
-.oc-sl{font-size:9px;letter-spacing:1px;text-transform:uppercase;color:var(--muted);}
+.oc-stats{display:flex;gap:14px;}
+.oc-sv{font-family:'Rajdhani',sans-serif;font-size:18px;font-weight:700;color:var(--pl);}
+.oc-sl{font-size:9px;letter-spacing:1px;color:var(--muted);}
 
 /* ── Proc ── */
-.proc-item{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid rgba(139,92,246,0.06);}
-.proc-item:last-child{border-bottom:none;}
-.proc-name{font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:600;color:var(--text);}
-.proc-mem{font-size:11px;color:var(--muted);min-width:55px;text-align:right;}
-.proc-kill{background:transparent;border:1px solid rgba(248,113,113,0.2);border-radius:7px;padding:3px 10px;font-size:9px;letter-spacing:1px;color:var(--red);cursor:pointer;transition:all .15s;margin-left:8px;font-family:'Exo 2';}
-.proc-kill:hover{background:rgba(248,113,113,0.08);}
-.proc-kill:disabled{opacity:.3;cursor:default;}
-.admin-warn{background:rgba(251,191,36,0.05);border:1px solid rgba(251,191,36,0.15);border-radius:10px;padding:9px 14px;font-size:11px;color:var(--amber);margin-bottom:12px;display:none;}
+.pi{display:flex;align-items:center;justify-content:space-between;padding:9px 0;border-bottom:1px solid rgba(139,92,246,0.05);}
+.pi:last-child{border-bottom:none;}
+.pi-name{font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:600;color:var(--text);}
+.pi-mem{font-size:10px;color:var(--muted);min-width:50px;text-align:right;}
+.pi-kill{background:transparent;border:1px solid rgba(248,113,113,0.18);border-radius:6px;padding:3px 9px;font-size:9px;letter-spacing:1px;color:var(--red);cursor:pointer;transition:all .15s;margin-left:8px;}
+.pi-kill:hover{background:rgba(248,113,113,0.07);}
+.pi-kill:disabled{opacity:.3;cursor:default;}
+.admin-w{background:rgba(251,191,36,0.04);border:1px solid rgba(251,191,36,0.14);border-radius:10px;padding:8px 14px;font-size:11px;color:var(--amber);margin-bottom:12px;display:none;}
 
-/* ── Modal OC ── */
-.modal-wrap{position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:200;display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
-.modal-wrap.show{display:flex;}
-.modal-box{background:var(--bg2);border:1px solid rgba(251,191,36,0.25);border-radius:18px;padding:22px;max-width:380px;width:90%;}
-.modal-title{font-family:'Rajdhani',sans-serif;font-size:17px;font-weight:700;color:var(--amber);margin-bottom:10px;}
-.modal-text{font-size:11px;color:var(--muted);line-height:1.7;margin-bottom:18px;white-space:pre-line;}
+/* ── Bars ── */
+.bw{margin-bottom:9px;}
+.bh{display:flex;justify-content:space-between;font-size:10px;color:var(--muted);margin-bottom:5px;}
+.bh b{color:var(--text);font-weight:500;}
+.bt{height:5px;background:rgba(255,255,255,0.04);border-radius:3px;overflow:hidden;}
+.bf{height:100%;border-radius:3px;transition:width .8s ease;}
+
+/* ── Modal ── */
+.modal-bg{position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:200;display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
+.modal-bg.show{display:flex;}
+.modal-box{background:var(--bg2);border:1px solid rgba(251,191,36,0.2);border-radius:18px;padding:22px;max-width:380px;width:90%;}
+.modal-t{font-family:'Rajdhani',sans-serif;font-size:16px;font-weight:700;color:var(--amber);margin-bottom:10px;}
+.modal-d{font-size:11px;color:var(--muted);line-height:1.7;margin-bottom:18px;white-space:pre-line;}
 .modal-btns{display:flex;gap:8px;}
-.modal-ok{flex:1;background:linear-gradient(135deg,#78350f,#d97706);border:none;border-radius:10px;padding:11px;font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;letter-spacing:2px;color:#fff;cursor:pointer;transition:all .2s;}
-.modal-ok:hover{box-shadow:0 4px 16px rgba(217,119,6,0.4);}
-.modal-cancel{flex:1;background:transparent;border:1px solid var(--border);border-radius:10px;padding:11px;font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:600;letter-spacing:1px;color:var(--muted);cursor:pointer;transition:all .2s;}
+.modal-ok{flex:1;background:linear-gradient(135deg,#78350f,#d97706);border:none;border-radius:10px;padding:10px;font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:700;letter-spacing:2px;color:#fff;cursor:pointer;}
+.modal-cancel{flex:1;background:transparent;border:1px solid var(--border);border-radius:10px;padding:10px;font-family:'Rajdhani',sans-serif;font-size:12px;font-weight:600;letter-spacing:1px;color:var(--muted);cursor:pointer;transition:all .2s;}
 .modal-cancel:hover{border-color:var(--borderh);color:var(--text);}
 
-/* ── Update banner ── */
-.update-banner{position:relative;z-index:9;background:linear-gradient(135deg,rgba(29,78,216,0.2),rgba(59,130,246,0.1));border-bottom:1px solid rgba(59,130,246,0.3);padding:9px 20px;display:none;align-items:center;justify-content:space-between;}
-.update-banner.show{display:flex;}
-.update-v{font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;color:#93c5fd;margin-bottom:2px;}
-.update-cl{font-size:10px;color:rgba(147,197,253,0.7);}
-.update-btns{display:flex;gap:8px;flex-shrink:0;}
-.update-now{background:linear-gradient(135deg,#1d4ed8,#3b82f6);border:none;border-radius:8px;padding:7px 16px;font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:700;letter-spacing:2px;color:#fff;cursor:pointer;transition:all .2s;}
-.update-now:hover{box-shadow:0 4px 14px rgba(59,130,246,0.4);}
-.update-later{background:transparent;border:1px solid rgba(255,255,255,0.15);border-radius:8px;padding:7px 12px;font-size:10px;color:rgba(255,255,255,0.5);cursor:pointer;}
-.upd-prog{height:3px;background:rgba(59,130,246,0.2);border-radius:2px;margin-top:5px;overflow:hidden;display:none;}
-.upd-prog-f{height:100%;background:#3b82f6;border-radius:2px;transition:width .3s;width:0%;}
-
 /* ── Toast ── */
-.toast{position:fixed;bottom:22px;right:22px;background:rgba(12,9,24,0.97);border:1px solid var(--borderh);border-radius:12px;padding:11px 18px;font-size:12px;color:var(--text);z-index:300;transform:translateY(20px);opacity:0;transition:all .3s;pointer-events:none;display:flex;align-items:center;gap:8px;backdrop-filter:blur(12px);}
+.toast{position:fixed;bottom:20px;right:20px;background:rgba(12,9,24,0.97);border:1px solid var(--borderh);border-radius:12px;padding:10px 16px;font-size:12px;color:var(--text);z-index:300;transform:translateY(20px);opacity:0;transition:all .3s;pointer-events:none;backdrop-filter:blur(12px);}
 .toast.show{transform:translateY(0);opacity:1;}
-.toast.success{border-color:rgba(52,211,153,0.35);color:var(--green);}
-.toast.error{border-color:rgba(248,113,113,0.35);color:var(--red);}
+.toast.success{border-color:rgba(52,211,153,0.3);color:var(--green);}
+.toast.error{border-color:rgba(248,113,113,0.3);color:var(--red);}
 </style>
 </head>
 <body>
-<div class="bg-mesh"></div>
-<div class="grid-bg"></div>
-
-<!-- Update banner -->
-<div class="update-banner" id="update-banner">
-  <div>
-    <div class="update-v">🚀 Mise à jour disponible — <span id="upd-ver"></span></div>
-    <div class="update-cl" id="upd-cl"></div>
-    <div class="upd-prog" id="upd-prog"><div class="upd-prog-f" id="upd-prog-f"></div></div>
-  </div>
-  <div class="update-btns">
-    <button class="update-later" onclick="document.getElementById('update-banner').classList.remove('show')">Plus tard</button>
-    <button class="update-now" id="upd-btn" onclick="doUpdate()">METTRE À JOUR</button>
-  </div>
-</div>
-
-<!-- Titlebar -->
-<div id="titlebar">
-  <div class="tb-brand">
-    <div class="tb-logo">
-      <svg viewBox="0 0 28 28" fill="none">
-        <polygon points="14,2 25,7 25,21 14,26 3,21 3,7" stroke="#a78bfa" stroke-width="1.5" fill="rgba(109,40,217,0.18)"/>
-        <polygon points="14,6 21,10 21,18 14,22 7,18 7,10" stroke="#8b5cf6" stroke-width="1" fill="rgba(109,40,217,0.12)"/>
-        <circle cx="14" cy="14" r="4" fill="rgba(109,40,217,0.5)" stroke="#a78bfa" stroke-width="1.5"/>
-        <circle cx="14" cy="14" r="2" fill="#c4b5fd"/>
-      </svg>
-    </div>
-    <div class="tb-name">NEX<span>US</span></div>
-    <div class="tb-tag">Pro v1.6</div>
-  </div>
-  <div class="tb-right">
-    <div class="tb-user-pill" id="tb-user-pill" style="display:none;">
-      <div class="tb-avatar" id="tb-avatar">?</div>
-      <div class="tb-uname" id="tb-uname">—</div>
-    </div>
-    <div class="tb-btns">
-      <button class="tb-btn" onclick="window.pywebview.api.minimize_window()"><svg viewBox="0 0 12 12"><line x1="1" y1="6" x2="11" y2="6"/></svg></button>
-      <button class="tb-btn close" onclick="window.pywebview.api.close_window()"><svg viewBox="0 0 12 12"><line x1="1" y1="1" x2="11" y2="11"/><line x1="11" y1="1" x2="1" y2="11"/></svg></button>
-    </div>
-  </div>
-</div>
+<div class="bg-fx"></div>
+<div class="bg-grid"></div>
 
 <!-- LOGIN -->
 <div id="s-login" class="auth-wrap active">
   <div class="auth-logo">
-    <div class="auth-hex">
-      <svg viewBox="0 0 70 70" fill="none">
-        <polygon points="35,3 63,18 63,52 35,67 7,52 7,18" stroke="#a78bfa" stroke-width="1.5" fill="rgba(76,29,149,0.15)"/>
-        <polygon points="35,12 54,22 54,48 35,58 16,48 16,22" stroke="#8b5cf6" stroke-width="1" fill="rgba(109,40,217,0.1)"/>
-        <circle cx="35" cy="35" r="8" fill="rgba(109,40,217,0.4)" stroke="#a78bfa" stroke-width="1.5"/>
-        <circle cx="35" cy="35" r="4" fill="#c4b5fd"/>
-      </svg>
-    </div>
-    <div class="auth-title-big">NEX<span>US</span></div>
+    <div class="auth-logo-icon"><svg viewBox="0 0 72 72" fill="none"><polygon points="36,3 65,19 65,53 36,69 7,53 7,19" stroke="#a78bfa" stroke-width="1.5" fill="rgba(76,29,149,0.15)"/><polygon points="36,12 56,22 56,50 36,60 16,50 16,22" stroke="#8b5cf6" stroke-width="1" fill="rgba(109,40,217,0.1)"/><circle cx="36" cy="36" r="9" fill="rgba(109,40,217,0.4)" stroke="#a78bfa" stroke-width="1.5"/><circle cx="36" cy="36" r="4.5" fill="#c4b5fd"/></svg></div>
+    <div class="auth-name">NEX<span>US</span></div>
     <div class="auth-sub">Gaming Optimizer Pro</div>
   </div>
   <div class="auth-card">
     <div class="auth-card-title">CONNEXION</div>
-    <div class="err-msg" id="l-err"></div>
-    <div class="f-group"><label class="f-lbl">Pseudo</label><input class="f-inp" id="l-user" type="text" placeholder="Ton pseudo" autocomplete="off"/></div>
-    <div class="f-group"><label class="f-lbl">Mot de passe</label><input class="f-inp" id="l-pass" type="password" placeholder="••••••••"/></div>
-    <button class="btn-primary" id="l-btn" onclick="doLogin()"><span>SE CONNECTER</span></button>
-    <div class="divider">ou</div>
-    <button class="btn-ghost" onclick="showS('s-reg')">Première fois ? Activer ma licence →</button>
+    <div class="err-b" id="l-err"></div>
+    <div class="fg"><label class="fl">Pseudo</label><input class="fi" id="l-user" type="text" placeholder="Ton pseudo" autocomplete="off"/></div>
+    <div class="fg"><label class="fl">Mot de passe</label><input class="fi" id="l-pass" type="password" placeholder="••••••••"/></div>
+    <button class="bp" id="l-btn" onclick="doLogin()"><span>SE CONNECTER</span></button>
+    <div class="div">ou</div>
+    <button class="bg" onclick="showS('s-reg')">Première fois ? Activer ma licence →</button>
   </div>
 </div>
 
 <!-- REGISTER -->
 <div id="s-reg" class="auth-wrap">
   <div class="auth-logo">
-    <div class="auth-hex">
-      <svg viewBox="0 0 70 70" fill="none">
-        <polygon points="35,3 63,18 63,52 35,67 7,52 7,18" stroke="#a78bfa" stroke-width="1.5" fill="rgba(76,29,149,0.15)"/>
-        <circle cx="35" cy="35" r="8" fill="rgba(109,40,217,0.4)" stroke="#a78bfa" stroke-width="1.5"/>
-        <circle cx="35" cy="35" r="4" fill="#c4b5fd"/>
-      </svg>
-    </div>
-    <div class="auth-title-big">NEX<span>US</span></div>
+    <div class="auth-logo-icon"><svg viewBox="0 0 72 72" fill="none"><polygon points="36,3 65,19 65,53 36,69 7,53 7,19" stroke="#a78bfa" stroke-width="1.5" fill="rgba(76,29,149,0.15)"/><circle cx="36" cy="36" r="9" fill="rgba(109,40,217,0.4)" stroke="#a78bfa" stroke-width="1.5"/><circle cx="36" cy="36" r="4.5" fill="#c4b5fd"/></svg></div>
+    <div class="auth-name">NEX<span>US</span></div>
     <div class="auth-sub">Activation de licence</div>
   </div>
   <div class="auth-card">
     <div class="auth-card-title">CRÉER UN COMPTE</div>
-    <div class="err-msg" id="r-err"></div>
-    <div class="ok-msg" id="r-ok"></div>
+    <div class="err-b" id="r-err"></div>
+    <div class="ok-b" id="r-ok"></div>
     <div class="hwid-row"><span>🔒</span><div><div class="hwid-lbl">Identifiant Machine</div><div class="hwid-val" id="r-hwid">Détection...</div></div></div>
-    <div class="f-group"><label class="f-lbl">Clé de licence</label><input class="f-inp" id="r-key" type="text" placeholder="NEXUS-XXXX-XXXX-XXXX-XXXX" maxlength="29" autocomplete="off"/></div>
-    <div class="f-group"><label class="f-lbl">Pseudo</label><input class="f-inp" id="r-user" type="text" placeholder="Ton pseudo (min 3 car.)" autocomplete="off"/></div>
-    <div class="f-group"><label class="f-lbl">Mot de passe</label><input class="f-inp" id="r-pass" type="password" placeholder="Min 6 caractères"/></div>
-    <div class="f-group"><label class="f-lbl">Confirmer</label><input class="f-inp" id="r-pass2" type="password" placeholder="Répète ton mot de passe"/></div>
-    <button class="btn-primary" id="r-btn" onclick="doReg()"><span>ACTIVER ET CRÉER LE COMPTE</span></button>
-    <div class="auth-link"><a onclick="showS('s-login')">← Retour à la connexion</a></div>
+    <div class="fg"><label class="fl">Clé de licence</label><input class="fi" id="r-key" type="text" placeholder="NEXUS-XXXX-XXXX-XXXX-XXXX" maxlength="29" autocomplete="off"/></div>
+    <div class="fg"><label class="fl">Pseudo</label><input class="fi" id="r-user" type="text" placeholder="Ton pseudo (min 3 car.)" autocomplete="off"/></div>
+    <div class="fg"><label class="fl">Mot de passe</label><input class="fi" id="r-pass" type="password" placeholder="Min 6 caractères"/></div>
+    <div class="fg"><label class="fl">Confirmer</label><input class="fi" id="r-pass2" type="password" placeholder="Répète ton mot de passe"/></div>
+    <button class="bp" id="r-btn" onclick="doReg()"><span>ACTIVER ET CRÉER LE COMPTE</span></button>
+    <div class="auth-lnk"><a onclick="showS('s-login')">← Retour à la connexion</a></div>
   </div>
 </div>
 
-<!-- DASHBOARD -->
-<div id="dash">
-  <div class="sidebar">
-    <div class="sb-header">
-      <div class="sb-status"><div class="sb-dot"></div><div class="sb-status-txt">LICENCE ACTIVE</div></div>
+<!-- APP -->
+<div id="app">
+  <!-- Titlebar -->
+  <div id="tb">
+    <div class="tb-left">
+      <div class="tb-logo"><svg viewBox="0 0 26 26" fill="none"><polygon points="13,2 23,7 23,19 13,24 3,19 3,7" stroke="#a78bfa" stroke-width="1.5" fill="rgba(109,40,217,0.2)"/><circle cx="13" cy="13" r="4" fill="rgba(109,40,217,0.5)" stroke="#a78bfa" stroke-width="1.5"/><circle cx="13" cy="13" r="2" fill="#c4b5fd"/></svg></div>
+      <div class="tb-name">NEX<span>US</span></div>
+      <div class="tb-v">Pro v1.6</div>
     </div>
-    <div class="sb-section">
-      <div class="sb-lbl">Principal</div>
-      <button class="sb-item active" onclick="showTab('overview',this)"><div class="sb-icon">📊</div>Vue d'ensemble<div class="sb-badge g">LIVE</div></button>
-      <button class="sb-item" onclick="showTab('games',this)"><div class="sb-icon">🎮</div>Profils Jeux<div class="sb-badge">8</div></button>
-      <button class="sb-item" onclick="showTab('gpu',this)"><div class="sb-icon">🖥️</div>GPU</button>
-      <button class="sb-item" onclick="showTab('cleaner',this)"><div class="sb-icon">🧹</div>Nettoyage</button>
-      <button class="sb-item" onclick="showTab('network',this)"><div class="sb-icon">🌐</div>Réseau</button>
-    </div>
-    <div class="sb-section">
-      <div class="sb-lbl">Avancé</div>
-      <button class="sb-item" onclick="showTab('checkup',this)"><div class="sb-icon">🩺</div>Check-up</button>
-      <button class="sb-item" onclick="showTab('overclock',this)"><div class="sb-icon">⚡</div>Overclocking</button>
-      <button class="sb-item" onclick="showTab('optimizer',this)"><div class="sb-icon">⚙️</div>Optimisations<div class="sb-badge">26</div></button>
-      <button class="sb-item" onclick="showTab('processes',this)"><div class="sb-icon">📋</div>Processus</button>
-    </div>
-    <div class="sb-footer">
-      <button class="sb-item" onclick="doLogout()" style="color:var(--red);"><div class="sb-icon" style="background:rgba(248,113,113,0.05);">🚪</div>Déconnecter</button>
-      <div class="sb-ver"><span>Nexus Pro v1.6</span><div style="width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);animation:sb-pulse 2s infinite;"></div></div>
+    <div class="tb-right">
+      <div class="tb-pill" id="tb-pill" style="display:none;"><div class="tb-av" id="tb-av">?</div><div class="tb-un" id="tb-un">—</div></div>
+      <button class="tb-btn" onclick="window.pywebview.api.minimize_window()"><svg viewBox="0 0 12 12"><line x1="1" y1="6" x2="11" y2="6"/></svg></button>
+      <button class="tb-btn cl" onclick="window.pywebview.api.close_window()"><svg viewBox="0 0 12 12"><line x1="1" y1="1" x2="11" y2="11"/><line x1="11" y1="1" x2="1" y2="11"/></svg></button>
     </div>
   </div>
-
-  <div class="main">
-
-    <!-- Vue d'ensemble -->
-    <div id="tab-overview">
-      <div class="admin-warn" id="admin-warn">⚠️ Lance en tant qu'administrateur pour toutes les optimisations.</div>
-      <div class="stats-row">
-        <div class="sc" style="--ac:#a78bfa;"><div class="sc-lbl">⚡ CPU Usage</div><div class="sc-val" id="s-cpu">—</div><div class="sc-sub">Usage actuel</div><div class="sc-bar"><div class="sc-bar-f" id="s-cpu-bar" style="background:linear-gradient(90deg,#6d28d9,#a78bfa);width:0%"></div></div></div>
-        <div class="sc" style="--ac:#34d399;"><div class="sc-lbl">💾 RAM Libre</div><div class="sc-val" id="s-ram">—</div><div class="sc-sub" id="s-ram-sub">—</div><div class="sc-bar"><div class="sc-bar-f" id="s-ram-bar" style="background:linear-gradient(90deg,#059669,#34d399);width:0%"></div></div></div>
-        <div class="sc" style="--ac:#fbbf24;"><div class="sc-lbl">🖥️ GPU Usage</div><div class="sc-val" id="s-gpu">—</div><div class="sc-sub" id="s-gpu-sub">—</div><div class="sc-bar"><div class="sc-bar-f" id="s-gpu-bar" style="background:linear-gradient(90deg,#b45309,#fbbf24);width:0%"></div></div></div>
-        <div class="sc" style="--ac:#60a5fa;"><div class="sc-lbl">🌡️ GPU Temp</div><div class="sc-val" id="s-temp">—</div><div class="sc-sub" id="s-vram">—</div><div class="sc-bar"><div class="sc-bar-f" id="s-temp-bar" style="background:linear-gradient(90deg,#1d4ed8,#60a5fa);width:0%"></div></div></div>
+  <!-- Update bar -->
+  <div id="upd-bar">
+    <div><div class="upd-v">🚀 Mise à jour — <span id="upd-ver"></span></div><div class="upd-cl" id="upd-cl"></div><div class="upd-prog" id="upd-prog"><div class="upd-prog-f" id="upd-prog-f"></div></div></div>
+    <div class="upd-btns"><button class="upd-later" onclick="document.getElementById('upd-bar').classList.remove('show')">Plus tard</button><button class="upd-now" id="upd-btn" onclick="doUpdate()">METTRE À JOUR</button></div>
+  </div>
+  <!-- Main layout -->
+  <div id="main-layout">
+    <!-- Sidebar icônes -->
+    <div id="sidebar">
+      <div class="sb-logo-mini">⬡</div>
+      <button class="sb-nav-btn active" onclick="showPage('home',this)" title="Accueil">🏠</button>
+      <button class="sb-nav-btn" onclick="showPage('games',this)" title="Profils Jeux">🎮</button>
+      <button class="sb-nav-btn" onclick="showPage('gpu',this)" title="GPU">🖥️</button>
+      <button class="sb-nav-btn" onclick="showPage('cleaner',this)" title="Nettoyage">🧹</button>
+      <button class="sb-nav-btn" onclick="showPage('network',this)" title="Réseau">🌐</button>
+      <div class="sb-sep"></div>
+      <button class="sb-nav-btn" onclick="showPage('checkup',this)" title="Check-up">🩺</button>
+      <button class="sb-nav-btn" onclick="showPage('overclock',this)" title="Overclocking">⚡</button>
+      <button class="sb-nav-btn" onclick="showPage('optimizer',this)" title="Optimisations">⚙️</button>
+      <button class="sb-nav-btn" onclick="showPage('processes',this)" title="Processus">📋</button>
+      <div class="sb-footer">
+        <a class="sb-nav-btn" href="https://discord.gg/5genNGtbdZ" title="Discord">💬</a>
+        <button class="sb-nav-btn" onclick="doLogout()" title="Déconnecter" style="color:var(--red);">🚪</button>
+        <div class="sb-dot-v"></div>
       </div>
-      <div class="grid2">
+    </div>
+    <!-- Content -->
+    <div id="content">
+
+      <!-- HOME -->
+      <div id="page-home" class="page active">
+        <div class="home-header">
+          <div>
+            <div class="home-greeting">Bonjour, <span id="home-username">—</span> !</div>
+            <div class="home-sub">Prêt à booster tes performances ?</div>
+          </div>
+          <div class="home-status"><div class="home-dot"></div><div class="home-status-txt">SYSTÈME OPTIMAL</div></div>
+        </div>
+        <div class="stats-grid">
+          <div class="sc" style="--ac:#a78bfa;"><div class="sc-lbl">⚡ CPU</div><div class="sc-val" id="s-cpu">—</div><div class="sc-sub" id="s-cpu-sub">Usage actuel</div><div class="sc-bar"><div class="sc-bf" id="s-cpu-bar" style="background:linear-gradient(90deg,#6d28d9,#a78bfa);width:0%"></div></div></div>
+          <div class="sc" style="--ac:#34d399;"><div class="sc-lbl">💾 RAM Libre</div><div class="sc-val" id="s-ram">—</div><div class="sc-sub" id="s-ram-sub">—</div><div class="sc-bar"><div class="sc-bf" id="s-ram-bar" style="background:linear-gradient(90deg,#059669,#34d399);width:0%"></div></div></div>
+          <div class="sc" style="--ac:#fbbf24;"><div class="sc-lbl">🖥️ GPU</div><div class="sc-val" id="s-gpu">—</div><div class="sc-sub" id="s-gpu-sub">—</div><div class="sc-bar"><div class="sc-bf" id="s-gpu-bar" style="background:linear-gradient(90deg,#b45309,#fbbf24);width:0%"></div></div></div>
+          <div class="sc" style="--ac:#60a5fa;"><div class="sc-lbl">🌡️ GPU Temp</div><div class="sc-val" id="s-temp">—</div><div class="sc-sub" id="s-vram">—</div><div class="sc-bar"><div class="sc-bf" id="s-temp-bar" style="background:linear-gradient(90deg,#1d4ed8,#60a5fa);width:0%"></div></div></div>
+        </div>
+        <div class="chart-section">
+          <div class="chart-panel">
+            <div class="chart-head">
+              <div class="chart-title">📈 Utilisation système</div>
+              <div class="chart-legend">
+                <div class="chart-leg-item"><div class="chart-leg-dot" style="background:#a78bfa;"></div>CPU</div>
+                <div class="chart-leg-item"><div class="chart-leg-dot" style="background:#34d399;"></div>RAM</div>
+                <div class="chart-leg-item"><div class="chart-leg-dot" style="background:#fbbf24;"></div>GPU</div>
+              </div>
+            </div>
+            <canvas id="chart"></canvas>
+          </div>
+          <div class="quick-panel">
+            <div class="quick-title">⚡ Actions rapides</div>
+            <div class="quick-btn" onclick="showPage('cleaner',document.querySelector('[onclick*=cleaner]'))">
+              <div class="quick-btn-icon" style="background:rgba(52,211,153,0.1);">🧹</div>
+              <div><div class="quick-btn-txt">Nettoyage rapide</div><div class="quick-btn-sub">Vider RAM + temp</div></div>
+            </div>
+            <div class="quick-btn" onclick="showPage('network',document.querySelector('[onclick*=network]'))">
+              <div class="quick-btn-icon" style="background:rgba(96,165,250,0.1);">🌐</div>
+              <div><div class="quick-btn-txt">Optimiser réseau</div><div class="quick-btn-sub">Réduire le ping</div></div>
+            </div>
+            <div class="quick-btn" onclick="showPage('checkup',document.querySelector('[onclick*=checkup]'))">
+              <div class="quick-btn-icon" style="background:rgba(251,191,36,0.1);">🩺</div>
+              <div><div class="quick-btn-txt">Check-up système</div><div class="quick-btn-sub">Maintenance complète</div></div>
+            </div>
+            <a class="quick-btn" href="https://discord.gg/5genNGtbdZ">
+              <div class="quick-btn-icon" style="background:rgba(88,101,242,0.15);">💬</div>
+              <div><div class="quick-btn-txt">Discord Nexus</div><div class="quick-btn-sub">Support & communauté</div></div>
+            </a>
+            <div id="boost-result" style="font-size:10px;color:var(--green);min-height:14px;"></div>
+            <button class="quick-boost" onclick="doBoost()"><span>⚡ BOOST GAMING</span></button>
+          </div>
+        </div>
+      </div>
+
+      <!-- GAMES -->
+      <div id="page-games" class="page">
+        <div class="page-title">🎮 Profils Jeux</div>
+        <div class="page-sub">Optimisations spécifiques — lance avant de jouer</div>
         <div class="panel">
-          <div class="panel-head"><div class="ptitle">📈 Performances</div><div class="badge g" id="perf-badge">BON</div></div>
-          <div id="perf-bars"></div>
+          <div class="ph"><div class="pt">Sélectionne ton jeu</div><div class="badge a" id="det-badge" style="display:none;">🟢 JEU DÉTECTÉ</div></div>
+          <div class="games-grid" id="games-grid"><div style="color:var(--muted);text-align:center;padding:2rem;grid-column:1/-1;">Chargement...</div></div>
         </div>
+      </div>
+
+      <!-- GPU -->
+      <div id="page-gpu" class="page">
+        <div class="page-title">🖥️ Optimisation GPU</div>
+        <div class="page-sub">Tweaks spécifiques pour ta carte graphique</div>
         <div class="panel">
-          <div class="panel-head"><div class="ptitle">⚡ Boost Rapide</div></div>
-          <p style="font-size:11px;color:var(--muted);margin-bottom:12px;line-height:1.6;">Applique toutes tes optimisations activées en un seul clic pour booster les performances.</p>
-          <div id="boost-result" style="font-size:11px;color:var(--green);margin-bottom:8px;min-height:14px;"></div>
-          <button class="boost-btn" id="boost-btn" onclick="doBoost()"><span>⚡ BOOST GAMING</span></button>
+          <div class="gpu-bar"><span style="font-size:22px;">🖥️</span><div><div style="font-family:'Rajdhani',sans-serif;font-size:14px;color:#fff;font-weight:600;" id="gpu-name">Détection...</div><div class="gpu-t-pill unknown" id="gpu-type">—</div></div></div>
+          <div class="g3">
+            <div class="ac"><span class="ac-ico">⚡</span><div class="ac-t">OPTIMISATION COMPLÈTE</div><div class="ac-d">Tweaks GPU spécifiques à ta carte.</div><div class="ac-r" id="gpu-r"></div><button class="abtn" id="gpu-btn" onclick="doGpu()"><span>OPTIMISER GPU</span></button></div>
+            <div class="ac"><span class="ac-ico">🚀</span><div class="ac-t">HAGS</div><div class="ac-d">Hardware Accelerated GPU Scheduling.</div><div class="ac-r" id="hags-r"></div><button class="abtn" id="hags-btn" onclick="doGpu()"><span>ACTIVER HAGS</span></button></div>
+            <div class="ac"><span class="ac-ico">🎯</span><div class="ac-t">PRIORITÉ GPU</div><div class="ac-d">Priorité maximale dans les jeux.</div><div class="ac-r" id="prio-r"></div><button class="abtn" id="prio-btn" onclick="doGpu()"><span>APPLIQUER</span></button></div>
+          </div>
         </div>
       </div>
-    </div>
 
-    <!-- Profils Jeux -->
-    <div id="tab-games" style="display:none;">
-      <div class="panel">
-        <div class="panel-head"><div class="ptitle">🎮 Profils par jeu</div><div class="badge a" id="detected-badge" style="display:none;">🟢 JEU DÉTECTÉ</div></div>
-        <p style="font-size:11px;color:var(--muted);margin-bottom:14px;line-height:1.6;">Optimisations spécifiques par jeu — lance avant de jouer pour des performances maximales.</p>
-        <div class="games-grid" id="games-grid"><div style="color:var(--muted);text-align:center;padding:2rem;grid-column:1/-1;">Chargement...</div></div>
-      </div>
-    </div>
-
-    <!-- GPU -->
-    <div id="tab-gpu" style="display:none;">
-      <div class="panel">
-        <div class="panel-head"><div class="ptitle">🖥️ Optimisation GPU</div></div>
-        <div class="gpu-info-bar"><span style="font-size:24px;">🖥️</span><div><div style="font-family:'Rajdhani',sans-serif;font-size:15px;color:#fff;font-weight:600;" id="gpu-name">Détection...</div><div class="gpu-type-pill unknown" id="gpu-type">—</div></div></div>
-        <div class="grid3">
-          <div class="ac"><span class="ac-icon">⚡</span><div class="ac-title">OPTIMISATION COMPLÈTE</div><div class="ac-desc">Tweaks GPU spécifiques à ta carte.</div><div class="ac-result" id="gpu-r"></div><button class="ac-btn" id="gpu-btn" onclick="doGpu()"><span>OPTIMISER GPU</span></button></div>
-          <div class="ac"><span class="ac-icon">🚀</span><div class="ac-title">HAGS</div><div class="ac-desc">Hardware Accelerated GPU Scheduling.</div><div class="ac-result" id="hags-r"></div><button class="ac-btn" id="hags-btn" onclick="doGpu()"><span>ACTIVER HAGS</span></button></div>
-          <div class="ac"><span class="ac-icon">🎯</span><div class="ac-title">PRIORITÉ GPU</div><div class="ac-desc">Priorité maximale dans les jeux.</div><div class="ac-result" id="prio-r"></div><button class="ac-btn" id="prio-btn" onclick="doGpu()"><span>APPLIQUER</span></button></div>
+      <!-- CLEANER -->
+      <div id="page-cleaner" class="page">
+        <div class="page-title">🧹 Nettoyage système</div>
+        <div class="page-sub">Libère la RAM et supprime les fichiers inutiles</div>
+        <div class="panel">
+          <div class="g3">
+            <div class="ac"><span class="ac-ico">🧹</span><div class="ac-t">NETTOYAGE COMPLET</div><div class="ac-d">Fichiers temp, RAM standby, Prefetch.</div><div class="ac-r" id="clean-r"></div><button class="abtn" id="clean-btn" onclick="doClean()"><span>NETTOYER TOUT</span></button></div>
+            <div class="ac"><span class="ac-ico">💾</span><div class="ac-t">VIDER RAM</div><div class="ac-d">RAM standby et cache DNS libérés.</div><div class="ac-r" id="ram-r"></div><button class="abtn" id="ram-btn" onclick="doRam()"><span>VIDER RAM</span></button></div>
+            <div class="ac"><span class="ac-ico">📁</span><div class="ac-t">FICHIERS TEMP</div><div class="ac-d">Fichiers temporaires Windows.</div><div class="ac-r" id="temp-r"></div><button class="abtn" id="temp-btn" onclick="doTemp()"><span>SUPPRIMER</span></button></div>
+          </div>
         </div>
       </div>
-    </div>
 
-    <!-- Nettoyage -->
-    <div id="tab-cleaner" style="display:none;">
-      <div class="panel">
-        <div class="panel-head"><div class="ptitle">🧹 Nettoyage système</div></div>
-        <div class="grid3">
-          <div class="ac"><span class="ac-icon">🧹</span><div class="ac-title">NETTOYAGE COMPLET</div><div class="ac-desc">Fichiers temp, RAM standby, Prefetch.</div><div class="ac-result" id="clean-r"></div><button class="ac-btn" id="clean-btn" onclick="doClean()"><span>NETTOYER TOUT</span></button></div>
-          <div class="ac"><span class="ac-icon">💾</span><div class="ac-title">VIDER RAM</div><div class="ac-desc">RAM standby et cache DNS libérés.</div><div class="ac-result" id="ram-r"></div><button class="ac-btn" id="ram-btn" onclick="doRam()"><span>VIDER RAM</span></button></div>
-          <div class="ac"><span class="ac-icon">📁</span><div class="ac-title">FICHIERS TEMP</div><div class="ac-desc">Fichiers temporaires Windows.</div><div class="ac-result" id="temp-r"></div><button class="ac-btn" id="temp-btn" onclick="doTemp()"><span>SUPPRIMER</span></button></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Réseau -->
-    <div id="tab-network" style="display:none;">
-      <div class="panel">
-        <div class="panel-head"><div class="ptitle">🌐 Optimisation réseau</div></div>
+      <!-- NETWORK -->
+      <div id="page-network" class="page">
+        <div class="page-title">🌐 Optimisation réseau</div>
+        <div class="page-sub">Réduis ton ping et optimise la connexion</div>
         <div class="net-stats">
           <div class="ns"><div class="ns-val" id="n-ping">—</div><div class="ns-lbl">📡 Ping ms</div></div>
           <div class="ns"><div class="ns-val" id="n-sent">—</div><div class="ns-lbl">⬆️ Envoyé MB</div></div>
           <div class="ns"><div class="ns-val" id="n-recv">—</div><div class="ns-lbl">⬇️ Reçu MB</div></div>
         </div>
-        <div class="grid2">
-          <div class="ac"><span class="ac-icon">🌐</span><div class="ac-title">OPTIMISATION COMPLÈTE</div><div class="ac-desc">TCP, DNS, QoS et carte réseau.</div><div class="ac-result" id="net-r"></div><button class="ac-btn" id="net-btn" onclick="doNet()"><span>OPTIMISER RÉSEAU</span></button></div>
-          <div class="ac"><span class="ac-icon">📡</span><div class="ac-title">TEST PING</div><div class="ac-desc">Ping vers Google DNS (8.8.8.8).</div><div class="ac-result" id="ping-r"></div><button class="ac-btn" id="ping-btn" onclick="doPing()"><span>TESTER PING</span></button></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Check-up -->
-    <div id="tab-checkup" style="display:none;">
-      <div class="panel">
-        <div class="panel-head"><div class="ptitle">🩺 Routine Check-up</div><div class="badge">SÉLECTIONNE ET LANCE</div></div>
-        <p style="font-size:11px;color:var(--muted);margin-bottom:12px;line-height:1.6;">Sélectionne les tâches et lance le check-up. À faire régulièrement pour maintenir ton PC au top.</p>
-        <div class="cu-grid">
-          <div class="cu-card sel" id="cu-temp" onclick="toggleCU('temp',this)"><div class="cu-check">✓</div><div class="cu-icon">🗑️</div><div class="cu-name">Fichiers temporaires</div><div class="cu-desc">Supprime les fichiers qui s'accumulent.</div></div>
-          <div class="cu-card sel" id="cu-gpu_cache" onclick="toggleCU('gpu_cache',this)"><div class="cu-check">✓</div><div class="cu-icon">🎮</div><div class="cu-name">Caches GPU</div><div class="cu-desc">Réinitialise les caches DirectX et shaders.</div></div>
-          <div class="cu-card" id="cu-disk" onclick="toggleCU('disk',this)"><div class="cu-check"></div><div class="cu-icon">💿</div><div class="cu-name">Optimisation disque</div><div class="cu-desc">TRIM SSD et défrag HDD.</div></div>
-          <div class="cu-card" id="cu-history" onclick="toggleCU('history',this)"><div class="cu-check"></div><div class="cu-icon">📜</div><div class="cu-name">Historique Windows</div><div class="cu-desc">Efface fichiers récents et miniatures.</div></div>
-          <div class="cu-card" id="cu-sfc" onclick="toggleCU('sfc',this)"><div class="cu-check"></div><div class="cu-icon">🔧</div><div class="cu-name">Réparation système</div><div class="cu-desc">SFC pour détecter les fichiers corrompus.</div></div>
-        </div>
-        <div id="cu-result" style="font-size:11px;color:var(--green);margin-bottom:8px;min-height:14px;"></div>
-        <button class="ac-btn" id="cu-btn" onclick="doCheckup()" style="width:100%;padding:12px;font-size:13px;"><span>🩺 LANCER LE CHECK-UP</span></button>
-      </div>
-      <div class="panel">
-        <div class="panel-head"><div class="ptitle">⏰ Nettoyage Automatique</div></div>
-        <div class="auto-row">
-          <div class="auto-info"><div class="at">Nettoyage RAM + Fichiers Temp</div><div class="ad">Lance automatiquement en arrière-plan.</div></div>
-          <div class="auto-controls">
-            <select class="sel-int" id="auto-int"><option value="15">15 min</option><option value="30" selected>30 min</option><option value="60">1 heure</option><option value="120">2 heures</option></select>
-            <button class="ac-btn" id="auto-btn" onclick="toggleAuto()" style="width:auto;padding:7px 16px;"><span>ACTIVER</span></button>
+        <div class="panel">
+          <div class="ph"><div class="pt">🌐 Optimisations TCP/IP</div></div>
+          <div class="g2" style="margin-bottom:12px;">
+            <div class="ac"><span class="ac-ico">🌐</span><div class="ac-t">OPTIMISATION COMPLÈTE</div><div class="ac-d">TCP, DNS, QoS et carte réseau — réduit le ping en jeu.</div><div class="ac-r" id="net-r"></div><button class="abtn" id="net-btn" onclick="doNet()"><span>OPTIMISER RÉSEAU</span></button></div>
+            <div class="ac"><span class="ac-ico">📡</span><div class="ac-t">TEST PING</div><div class="ac-d">Mesure ton ping actuel vers Google DNS (8.8.8.8).</div><div class="ac-r" id="ping-r"></div><button class="abtn" id="ping-btn" onclick="doPing()"><span>TESTER PING</span></button></div>
           </div>
-        </div>
-        <div id="auto-status" style="font-size:10px;color:var(--muted);text-align:center;"></div>
-      </div>
-    </div>
-
-    <!-- Overclocking -->
-    <div id="tab-overclock" style="display:none;">
-      <div class="warn-box">
-        <div class="warn-title">⚠️ Avertissement — Overclocking sécurisé</div>
-        <div class="warn-text">Nexus utilise uniquement des presets SÉCURISÉS :\n✅ Pas d'augmentation de fréquence manuelle\n✅ Pas d'undervolting\n✅ Uniquement Power Limit et ventilateur\n\nNexus Software ne peut être tenu responsable des dommages éventuels.</div>
-      </div>
-      <div class="panel" style="margin-bottom:12px;">
-        <div style="display:flex;align-items:center;justify-content:space-between;">
-          <div><div style="font-family:'Rajdhani',sans-serif;font-size:15px;color:#fff;font-weight:600;" id="oc-gpu">Détection GPU...</div><div style="font-size:10px;color:var(--muted);margin-top:2px;">NVIDIA uniquement pour l'overclocking</div></div>
-          <div class="oc-stats-bar">
-            <div class="oc-stat"><div class="oc-sv" id="oc-temp">—</div><div class="oc-sl">TEMP</div></div>
-            <div class="oc-stat" style="margin-left:16px;"><div class="oc-sv" id="oc-power">—</div><div class="oc-sl">POWER</div></div>
-            <div class="oc-stat" style="margin-left:16px;"><div class="oc-sv" id="oc-fan">—</div><div class="oc-sl">FAN</div></div>
+          <div class="ph"><div class="pt">🔧 Optimisations avancées réseau</div></div>
+          <div class="g3">
+            <div class="ac"><span class="ac-ico">🃏</span><div class="ac-t">CARTE RÉSEAU</div><div class="ac-d">Désactive les économies d'énergie et ajuste les perfs réseau.</div><div class="ac-r" id="nic-r"></div><button class="abtn" id="nic-btn" onclick="doNic()"><span>OPTIMISER</span></button></div>
+            <div class="ac"><span class="ac-ico">📶</span><div class="ac-t">CONTRÔLE CONGESTION</div><div class="ac-d">Améliore la gestion des données échangées — ping plus stable.</div><div class="ac-r" id="cong-r"></div><button class="abtn" id="cong-btn" onclick="doCong()"><span>OPTIMISER</span></button></div>
+            <div class="ac"><span class="ac-ico">🎯</span><div class="ac-t">PRIORISATION DSCP</div><div class="ac-d">Donne la priorité au trafic des jeux — ping constant.</div><div class="ac-r" id="dscp-r"></div><button class="abtn" id="dscp-btn" onclick="doDscp()"><span>OPTIMISER</span></button></div>
           </div>
         </div>
       </div>
-      <div class="oc-grid" id="oc-presets"><div style="color:var(--muted);text-align:center;grid-column:1/-1;padding:2rem;">Chargement...</div></div>
-      <button class="ac-btn" onclick="resetOC()" style="background:rgba(248,113,113,0.08);border:1px solid rgba(248,113,113,0.2);color:var(--red);width:100%;padding:10px;"><span>🔄 Remettre les paramètres GPU par défaut</span></button>
-    </div>
 
-    <!-- Optimisations -->
-    <div id="tab-optimizer" style="display:none;">
-      <div class="panel">
-        <div class="panel-head"><div class="ptitle">⚙️ Toutes les optimisations</div><div class="badge" id="opt-badge">—</div></div>
-        <div id="opt-list"></div>
-      </div>
-    </div>
-
-    <!-- Processus -->
-    <div id="tab-processes" style="display:none;">
-      <div class="panel">
-        <div class="panel-head">
-          <div class="ptitle">📋 Processus inutiles</div>
-          <button style="background:rgba(248,113,113,0.07);border:1px solid rgba(248,113,113,0.2);border-radius:8px;padding:5px 12px;font-size:10px;letter-spacing:1px;color:var(--red);cursor:pointer;" onclick="killAll()">TOUT TERMINER</button>
+      <!-- CHECKUP -->
+      <div id="page-checkup" class="page">
+        <div class="page-title">🩺 Routine Check-up</div>
+        <div class="page-sub">Maintenance régulière pour garder ton PC au top</div>
+        <div class="panel">
+          <div class="ph"><div class="pt">Sélectionne les tâches</div><div class="badge">SÉLECTIONNE ET LANCE</div></div>
+          <div class="cu-grid">
+            <div class="cu-card sel" id="cu-temp" onclick="toggleCU('temp',this)"><div class="cu-check">✓</div><div class="cu-ico">🗑️</div><div class="cu-name">Fichiers temporaires</div><div class="cu-desc">Supprime les fichiers qui s'accumulent.</div></div>
+            <div class="cu-card sel" id="cu-gpu_cache" onclick="toggleCU('gpu_cache',this)"><div class="cu-check">✓</div><div class="cu-ico">🎮</div><div class="cu-name">Caches GPU</div><div class="cu-desc">Réinitialise les caches DirectX et shaders.</div></div>
+            <div class="cu-card" id="cu-disk" onclick="toggleCU('disk',this)"><div class="cu-check"></div><div class="cu-ico">💿</div><div class="cu-name">Optimisation disque</div><div class="cu-desc">TRIM SSD et défrag HDD.</div></div>
+            <div class="cu-card" id="cu-history" onclick="toggleCU('history',this)"><div class="cu-check"></div><div class="cu-ico">📜</div><div class="cu-name">Historique Windows</div><div class="cu-desc">Efface fichiers récents et miniatures.</div></div>
+            <div class="cu-card" id="cu-sfc" onclick="toggleCU('sfc',this)"><div class="cu-check"></div><div class="cu-ico">🔧</div><div class="cu-name">Réparation système</div><div class="cu-desc">SFC pour détecter les fichiers corrompus.</div></div>
+          </div>
+          <div id="cu-result" style="font-size:11px;color:var(--green);margin-bottom:8px;min-height:14px;"></div>
+          <button class="abtn" id="cu-btn" onclick="doCheckup()" style="width:100%;padding:12px;font-size:13px;"><span>🩺 LANCER LE CHECK-UP</span></button>
         </div>
-        <div id="proc-list"><div style="color:var(--muted);text-align:center;padding:2rem;">Chargement...</div></div>
+        <div class="panel">
+          <div class="ph"><div class="pt">⏰ Nettoyage Automatique</div></div>
+          <div class="auto-row">
+            <div><div class="auto-t">Nettoyage RAM + Fichiers Temp</div><div class="auto-d">Lance automatiquement en arrière-plan.</div></div>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <select class="sel-int" id="auto-int"><option value="15">15 min</option><option value="30" selected>30 min</option><option value="60">1h</option><option value="120">2h</option></select>
+              <button class="abtn" id="auto-btn" onclick="toggleAuto()" style="width:auto;padding:7px 14px;"><span>ACTIVER</span></button>
+            </div>
+          </div>
+          <div id="auto-status" style="font-size:10px;color:var(--muted);text-align:center;"></div>
+        </div>
       </div>
-    </div>
 
+      <!-- OVERCLOCK -->
+      <div id="page-overclock" class="page">
+        <div class="page-title">⚡ Overclocking sécurisé</div>
+        <div class="page-sub">Presets sécurisés — pas d'undervolting, pas de fréquences manuelles</div>
+        <div class="warn-box">
+          <div class="warn-t">⚠️ Avertissement</div>
+          <div class="warn-d">Nexus utilise uniquement des presets SÉCURISÉS :\n✅ Pas d'augmentation de fréquence manuelle\n✅ Pas d'undervolting — uniquement Power Limit et ventilateur\n\nNexus Software ne peut être tenu responsable des dommages éventuels.</div>
+        </div>
+        <div class="panel" style="margin-bottom:12px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <div><div style="font-family:'Rajdhani',sans-serif;font-size:14px;color:#fff;font-weight:600;" id="oc-gpu">Détection GPU...</div><div style="font-size:10px;color:var(--muted);margin-top:2px;">NVIDIA uniquement</div></div>
+            <div class="oc-stats">
+              <div class="oc-stat"><div class="oc-sv" id="oc-temp">—</div><div class="oc-sl">TEMP</div></div>
+              <div class="oc-stat" style="margin-left:14px;"><div class="oc-sv" id="oc-power">—</div><div class="oc-sl">POWER</div></div>
+              <div class="oc-stat" style="margin-left:14px;"><div class="oc-sv" id="oc-fan">—</div><div class="oc-sl">FAN</div></div>
+            </div>
+          </div>
+        </div>
+        <div class="oc-grid" id="oc-presets"><div style="color:var(--muted);text-align:center;grid-column:1/-1;padding:2rem;">Chargement...</div></div>
+        <button class="abtn" onclick="resetOC()" style="background:rgba(248,113,113,0.07);border:1px solid rgba(248,113,113,0.18);color:var(--red);width:100%;padding:10px;"><span>🔄 Remettre les paramètres GPU par défaut</span></button>
+      </div>
+
+      <!-- OPTIMIZER -->
+      <div id="page-optimizer" class="page">
+        <div class="page-title">⚙️ Optimisations Windows</div>
+        <div class="page-sub">26 tweaks pour maximiser les performances</div>
+        <div class="panel">
+          <div class="ph"><div class="pt">Tous les tweaks</div><div class="badge" id="opt-badge">—</div></div>
+          <div class="admin-w" id="admin-w">⚠️ Lance en tant qu'administrateur pour toutes les optimisations.</div>
+          <div id="opt-list"></div>
+        </div>
+      </div>
+
+      <!-- PROCESSES -->
+      <div id="page-processes" class="page">
+        <div class="page-title">📋 Processus inutiles</div>
+        <div class="page-sub">Libère des ressources en terminant les processus inutiles</div>
+        <div class="panel">
+          <div class="ph"><div class="pt">Processus détectés</div><button style="background:rgba(248,113,113,0.06);border:1px solid rgba(248,113,113,0.18);border-radius:8px;padding:4px 12px;font-size:10px;letter-spacing:1px;color:var(--red);cursor:pointer;" onclick="killAll()">TOUT TERMINER</button></div>
+          <div id="proc-list"><div style="color:var(--muted);text-align:center;padding:2rem;">Chargement...</div></div>
+        </div>
+      </div>
+
+    </div>
   </div>
 </div>
 
 <!-- Modal OC -->
-<div class="modal-wrap" id="oc-modal">
+<div class="modal-bg" id="oc-modal">
   <div class="modal-box">
-    <div class="modal-title">⚠️ Confirmation requise</div>
-    <div class="modal-text" id="oc-modal-text"></div>
-    <div class="modal-btns">
-      <button class="modal-cancel" onclick="closeOCModal()">ANNULER</button>
-      <button class="modal-ok" onclick="confirmOC()">JE COMPRENDS — CONTINUER</button>
-    </div>
+    <div class="modal-t">⚠️ Confirmation requise</div>
+    <div class="modal-d" id="oc-modal-d"></div>
+    <div class="modal-btns"><button class="modal-cancel" onclick="closeOCModal()">ANNULER</button><button class="modal-ok" onclick="confirmOC()">JE COMPRENDS — CONTINUER</button></div>
   </div>
 </div>
 
@@ -565,6 +578,7 @@ body{background:var(--bg);font-family:'Exo 2',sans-serif;color:var(--text);overf
 
 <script>
 var _pyReady=false,_user='',optStates={},_selCU=['temp','gpu_cache'],_autoOn=false,_pendingOC=null,_updUrl='';
+var chartData={cpu:[],ram:[],gpu:[]};var MAX_PTS=40;var chartCtx=null,chartObj=null;
 
 window.addEventListener('pywebviewready',function(){
   _pyReady=true;
@@ -576,7 +590,7 @@ window.showUpdateNotification=function(u){
   _updUrl=u.download_url;
   document.getElementById('upd-ver').textContent='v'+u.latest;
   document.getElementById('upd-cl').textContent=u.changelog||'';
-  document.getElementById('update-banner').classList.add('show');
+  document.getElementById('upd-bar').classList.add('show');
 };
 
 function doUpdate(){
@@ -591,7 +605,7 @@ function doUpdate(){
 }
 
 function showS(id){document.querySelectorAll('.auth-wrap').forEach(function(s){s.classList.remove('active');});document.getElementById(id).classList.add('active');}
-function showToast(m,t){var el=document.getElementById('toast');el.innerHTML=(t==='success'?'✅ ':t==='error'?'❌ ':'ℹ️ ')+m;el.className='toast show '+(t||'');setTimeout(function(){el.className='toast';},3500);}
+function showToast(m,t){var el=document.getElementById('toast');el.textContent=(t==='success'?'✅ ':t==='error'?'❌ ':'ℹ️ ')+m;el.className='toast show '+(t||'');setTimeout(function(){el.className='toast';},3500);}
 
 document.getElementById('r-key').addEventListener('input',function(){
   var v=this.value.toUpperCase().replace(/[^A-Z0-9]/g,'');
@@ -633,92 +647,181 @@ function doReg(){
 
 function goDash(username){
   document.querySelectorAll('.auth-wrap').forEach(function(s){s.classList.remove('active');});
-  document.getElementById('dash').style.display='flex';
-  var pill=document.getElementById('tb-user-pill');
-  pill.style.display='flex';
-  document.getElementById('tb-avatar').textContent=username[0].toUpperCase();
-  document.getElementById('tb-uname').textContent=username;
+  document.getElementById('app').style.display='flex';
+  document.getElementById('app').style.flexDirection='column';
+  var pill=document.getElementById('tb-pill');pill.style.display='flex';
+  document.getElementById('tb-av').textContent=username[0].toUpperCase();
+  document.getElementById('tb-un').textContent=username;
+  document.getElementById('home-username').textContent=username;
   initDash();
 }
 
 function doLogout(){
   window.pywebview.api.logout();
-  document.getElementById('dash').style.display='none';
-  document.getElementById('tb-user-pill').style.display='none';
+  document.getElementById('app').style.display='none';
+  document.getElementById('tb-pill').style.display='none';
   showS('s-login');
   document.getElementById('l-user').value='';
   document.getElementById('l-pass').value='';
 }
 
-function initDash(){loadOpts();refreshStats();loadProcs();loadGames();loadGpuInfo();loadNetStats();}
+function initDash(){
+  initChart();
+  loadOpts();
+  refreshStats();
+  loadProcs();
+  loadGames();
+  loadGpuInfo();
+  loadNetStats();
+}
 
-function refreshStats(){
-  window.pywebview.api.get_system_stats().then(function(s){
-    if(!s||s.error)return;
-    document.getElementById('s-cpu').textContent=s.cpu_percent+'%';
-    document.getElementById('s-cpu-bar').style.width=s.cpu_percent+'%';
-    document.getElementById('s-ram').textContent=s.ram_free_gb+' GB';
-    document.getElementById('s-ram-sub').textContent='RAM % : '+s.ram_percent+'%';
-    document.getElementById('s-ram-bar').style.width=s.ram_percent+'%';
-    document.getElementById('s-gpu').textContent=s.gpu_load+'%';
-    document.getElementById('s-gpu-bar').style.width=s.gpu_load+'%';
-    document.getElementById('s-temp').textContent=s.gpu_temp+'°C';
-    document.getElementById('s-vram').textContent='VRAM: '+s.gpu_vram_used+' MB';
-    document.getElementById('s-temp-bar').style.width=Math.min(s.gpu_temp,100)+'%';
-    document.getElementById('n-sent').textContent=s.net_sent_mb;
-    document.getElementById('n-recv').textContent=s.net_recv_mb;
-    var adminEl=document.getElementById('admin-warn');
-    adminEl.style.display=s.is_admin?'none':'block';
-    var bars=[
-      {l:'CPU',v:s.cpu_percent,c:s.cpu_percent>80?'#ef4444':s.cpu_percent>50?'#f59e0b':'#34d399'},
-      {l:'RAM utilisée',v:s.ram_percent,c:s.ram_percent>85?'#ef4444':s.ram_percent>65?'#f59e0b':'#8b5cf6'},
-      {l:'GPU',v:s.gpu_load,c:s.gpu_load>85?'#ef4444':s.gpu_load>60?'#f59e0b':'#60a5fa'},
-    ];
-    document.getElementById('perf-bars').innerHTML=bars.map(function(b){
-      return '<div class="bw"><div class="bh"><span>'+b.l+'</span><b>'+Math.round(b.v)+'%</b></div><div class="bt"><div class="bf" style="width:'+b.v+'%;background:'+b.c+';"></div></div></div>';
-    }).join('');
+// ── Chart ────────────────────────────────────────────────────────
+function initChart(){
+  var canvas=document.getElementById('chart');
+  canvas.width=canvas.offsetWidth||600;
+  canvas.height=140;
+  chartCtx=canvas.getContext('2d');
+  for(var i=0;i<MAX_PTS;i++){chartData.cpu.push(0);chartData.ram.push(0);chartData.gpu.push(0);}
+  drawChart();
+}
+
+function drawChart(){
+  if(!chartCtx)return;
+  var w=chartCtx.canvas.width,h=chartCtx.canvas.height;
+  chartCtx.clearRect(0,0,w,h);
+  // Grid lines
+  chartCtx.strokeStyle='rgba(139,92,246,0.08)';chartCtx.lineWidth=1;
+  for(var y=0;y<=4;y++){var yy=h*(y/4);chartCtx.beginPath();chartCtx.moveTo(0,yy);chartCtx.lineTo(w,yy);chartCtx.stroke();}
+  // Draw lines
+  var colors=['#a78bfa','#34d399','#fbbf24'];
+  var keys=['cpu','ram','gpu'];
+  keys.forEach(function(k,ki){
+    var data=chartData[k];
+    chartCtx.beginPath();
+    chartCtx.strokeStyle=colors[ki];
+    chartCtx.lineWidth=2;
+    chartCtx.shadowColor=colors[ki];
+    chartCtx.shadowBlur=4;
+    data.forEach(function(v,i){
+      var x=(i/(MAX_PTS-1))*w,y=h-(v/100)*h;
+      if(i===0)chartCtx.moveTo(x,y);else chartCtx.lineTo(x,y);
+    });
+    chartCtx.stroke();
+    chartCtx.shadowBlur=0;
+    // Fill
+    chartCtx.beginPath();
+    data.forEach(function(v,i){var x=(i/(MAX_PTS-1))*w,y=h-(v/100)*h;if(i===0)chartCtx.moveTo(x,y);else chartCtx.lineTo(x,y);});
+    chartCtx.lineTo(w,h);chartCtx.lineTo(0,h);chartCtx.closePath();
+    chartCtx.fillStyle='rgba('+[ki===0?'167,139,250':ki===1?'52,211,153':'251,191,36']+',0.05)';
+    chartCtx.fill();
   });
 }
 
-window.updateStats=function(s){
-  if(document.getElementById('dash').style.display==='none')return;
+function updateChart(cpu,ram,gpu){
+  chartData.cpu.push(cpu);chartData.cpu.shift();
+  chartData.ram.push(ram);chartData.ram.shift();
+  chartData.gpu.push(gpu);chartData.gpu.shift();
+  drawChart();
+}
+
+// ── Stats ────────────────────────────────────────────────────────
+function refreshStats(){
+  window.pywebview.api.get_system_stats().then(function(s){
+    if(!s||s.error)return;
+    updateStatsUI(s);
+  });
+}
+
+function updateStatsUI(s){
   document.getElementById('s-cpu').textContent=s.cpu_percent+'%';
   document.getElementById('s-cpu-bar').style.width=s.cpu_percent+'%';
   document.getElementById('s-ram').textContent=s.ram_free_gb+' GB';
+  document.getElementById('s-ram-sub').textContent='Utilisée: '+s.ram_percent+'%';
   document.getElementById('s-ram-bar').style.width=s.ram_percent+'%';
-  document.getElementById('s-gpu').textContent=s.gpu_load+'%';
-  document.getElementById('s-gpu-bar').style.width=s.gpu_load+'%';
-  document.getElementById('s-temp').textContent=s.gpu_temp+'°C';
-  document.getElementById('s-vram').textContent='VRAM: '+s.gpu_vram_used+' MB';
+  document.getElementById('s-gpu').textContent=(s.gpu_load||0)+'%';
+  document.getElementById('s-gpu-sub').textContent='VRAM: '+(s.gpu_vram_used||0)+' MB';
+  document.getElementById('s-gpu-bar').style.width=(s.gpu_load||0)+'%';
+  document.getElementById('s-temp').textContent=(s.gpu_temp||0)+'°C';
+  document.getElementById('s-vram').textContent='Total: '+(s.gpu_vram_total||0)+' MB';
+  document.getElementById('s-temp-bar').style.width=Math.min(s.gpu_temp||0,100)+'%';
   document.getElementById('n-sent').textContent=s.net_sent_mb;
   document.getElementById('n-recv').textContent=s.net_recv_mb;
+  if(s.is_admin!==undefined)document.getElementById('admin-w').style.display=s.is_admin?'none':'block';
+  updateChart(s.cpu_percent,s.ram_percent,s.gpu_load||0);
+}
+
+window.updateStats=function(s){
+  if(document.getElementById('app').style.display==='none')return;
+  updateStatsUI(s);
 };
 
 window.updateDetectedGames=function(games){
-  document.getElementById('detected-badge').style.display=games.length>0?'block':'none';
-  games.forEach(function(id){var c=document.getElementById('gc-'+id);if(c){c.classList.add('active-game');var p=c.querySelector('.detected-pill');if(p)p.style.display='block';}});
+  document.getElementById('det-badge').style.display=games.length>0?'block':'none';
+  games.forEach(function(id){var c=document.getElementById('gc-'+id);if(c){c.classList.add('active-game');var p=c.querySelector('.det-pill');if(p)p.style.display='block';}});
 };
 
+// ── GPU ──────────────────────────────────────────────────────────
 function loadGpuInfo(){
   window.pywebview.api.get_gpu_info().then(function(i){
     if(!i)return;
     document.getElementById('gpu-name').textContent=i.name;
-    var b=document.getElementById('gpu-type');
-    b.textContent=i.type.toUpperCase();
-    b.className='gpu-type-pill '+i.type;
+    var b=document.getElementById('gpu-type');b.textContent=i.type.toUpperCase();b.className='gpu-t-pill '+i.type;
   });
 }
 
-function loadNetStats(){
-  window.pywebview.api.get_ping().then(function(p){document.getElementById('n-ping').textContent=p>0?p:'—';});
+function doGpu(){
+  var btns=[['gpu-btn','OPTIMISER GPU'],['hags-btn','ACTIVER HAGS'],['prio-btn','APPLIQUER']];
+  btns.forEach(function(x){var b=document.getElementById(x[0]);b.disabled=true;b.querySelector('span').textContent='⏳...';});
+  window.pywebview.api.optimize_gpu().then(function(r){
+    btns.forEach(function(x,i){var b=document.getElementById(x[0]);b.disabled=false;if(r&&r.success){b.querySelector('span').textContent='✅ Fait';b.classList.add('done');setTimeout(function(){b.querySelector('span').textContent=x[1];b.classList.remove('done');},4000);}else b.querySelector('span').textContent=x[1];});
+    if(r&&r.success)showToast(r.gpu_name+' optimisé !','success');else showToast('Erreur GPU','error');
+  });
 }
 
+// ── Cleaner ──────────────────────────────────────────────────────
+function doClean(){var b=document.getElementById('clean-btn');b.disabled=true;b.querySelector('span').textContent='⏳...';window.pywebview.api.clean_all().then(function(r){b.disabled=false;if(r&&r.success){b.querySelector('span').textContent='✅ Terminé';b.classList.add('done');document.getElementById('clean-r').textContent=r.message;showToast('Nettoyage terminé !','success');setTimeout(function(){b.querySelector('span').textContent='NETTOYER TOUT';b.classList.remove('done');},4000);}else{b.querySelector('span').textContent='NETTOYER TOUT';showToast('Erreur','error');}});}
+function doRam(){var b=document.getElementById('ram-btn');b.disabled=true;b.querySelector('span').textContent='⏳...';window.pywebview.api.clean_ram_only().then(function(){b.disabled=false;b.querySelector('span').textContent='✅ Vidée';b.classList.add('done');document.getElementById('ram-r').textContent='RAM libérée !';showToast('RAM vidée !','success');setTimeout(function(){b.querySelector('span').textContent='VIDER RAM';b.classList.remove('done');},3000);});}
+function doTemp(){var b=document.getElementById('temp-btn');b.disabled=true;b.querySelector('span').textContent='⏳...';window.pywebview.api.clean_all().then(function(r){b.disabled=false;if(r&&r.success){b.querySelector('span').textContent='✅ Supprimé';b.classList.add('done');document.getElementById('temp-r').textContent=r.freed_mb+' MB libérés';showToast(r.freed_mb+' MB libérés !','success');setTimeout(function(){b.querySelector('span').textContent='SUPPRIMER';b.classList.remove('done');},3000);}else b.querySelector('span').textContent='SUPPRIMER';});}
+
+// ── Network ──────────────────────────────────────────────────────
+function loadNetStats(){window.pywebview.api.get_ping().then(function(p){document.getElementById('n-ping').textContent=p>0?p:'—';});}
+function doNet(){var b=document.getElementById('net-btn');b.disabled=true;b.querySelector('span').textContent='⏳...';window.pywebview.api.optimize_network().then(function(r){b.disabled=false;if(r&&r.success){b.querySelector('span').textContent='✅ Optimisé';b.classList.add('done');document.getElementById('net-r').textContent=r.message;if(r.ping>0)document.getElementById('n-ping').textContent=r.ping;showToast('Réseau optimisé !','success');setTimeout(function(){b.querySelector('span').textContent='OPTIMISER RÉSEAU';b.classList.remove('done');},4000);}else{b.querySelector('span').textContent='OPTIMISER RÉSEAU';showToast('Erreur','error');}});}
+function doPing(){var b=document.getElementById('ping-btn');b.disabled=true;b.querySelector('span').textContent='⏳...';window.pywebview.api.get_ping().then(function(p){b.disabled=false;b.querySelector('span').textContent='TESTER PING';var m=p>0?p+' ms':'Échec';document.getElementById('ping-r').textContent=m;document.getElementById('n-ping').textContent=p>0?p:'—';showToast('Ping: '+m,p>0?'success':'error');});}
+
+function doNic(){
+  var b=document.getElementById('nic-btn');b.disabled=true;b.querySelector('span').textContent='⏳...';
+  window.pywebview.api.optimize_network().then(function(r){
+    b.disabled=false;
+    if(r&&r.success){b.querySelector('span').textContent='✅ Fait';b.classList.add('done');document.getElementById('nic-r').textContent='Carte réseau optimisée';showToast('Carte réseau optimisée !','success');setTimeout(function(){b.querySelector('span').textContent='OPTIMISER';b.classList.remove('done');},4000);}
+    else{b.querySelector('span').textContent='OPTIMISER';showToast('Erreur','error');}
+  });
+}
+
+function doCong(){
+  var b=document.getElementById('cong-btn');b.disabled=true;b.querySelector('span').textContent='⏳...';
+  window.pywebview.api.optimize_network().then(function(r){
+    b.disabled=false;
+    if(r&&r.success){b.querySelector('span').textContent='✅ Fait';b.classList.add('done');document.getElementById('cong-r').textContent='Contrôle congestion optimisé';showToast('Contrôle congestion optimisé !','success');setTimeout(function(){b.querySelector('span').textContent='OPTIMISER';b.classList.remove('done');},4000);}
+    else{b.querySelector('span').textContent='OPTIMISER';showToast('Erreur','error');}
+  });
+}
+
+function doDscp(){
+  var b=document.getElementById('dscp-btn');b.disabled=true;b.querySelector('span').textContent='⏳...';
+  window.pywebview.api.optimize_network().then(function(r){
+    b.disabled=false;
+    if(r&&r.success){b.querySelector('span').textContent='✅ Fait';b.classList.add('done');document.getElementById('dscp-r').textContent='Priorisation DSCP activée';showToast('Priorisation DSCP activée !','success');setTimeout(function(){b.querySelector('span').textContent='OPTIMISER';b.classList.remove('done');},4000);}
+    else{b.querySelector('span').textContent='OPTIMISER';showToast('Erreur','error');}
+  });
+}
+
+// ── Games ────────────────────────────────────────────────────────
 function loadGames(){
   window.pywebview.api.get_game_profiles().then(function(profs){
     if(!profs)return;
     document.getElementById('games-grid').innerHTML=profs.map(function(p){
-      var tw=p.tweaks.map(function(t){return '<span class="g-tweak">'+t+'</span>';}).join('');
-      return '<div class="game-card" id="gc-'+p.id+'"><div class="detected-pill">🟢 EN JEU</div><div class="g-icon">'+p.icon+'</div><div class="g-name">'+p.name+'</div><div class="g-desc">'+p.description+'</div><div class="g-tweaks">'+tw+'</div><button class="g-btn" onclick="applyGame(\''+p.id+'\',this)"><span>⚡ OPTIMISER</span></button></div>';
+      var tw=p.tweaks.map(function(t){return '<span class="gc-tweak">'+t+'</span>';}).join('');
+      return '<div class="gc" id="gc-'+p.id+'"><div class="det-pill">🟢 EN JEU</div><div class="gc-ico">'+p.icon+'</div><div class="gc-name">'+p.name+'</div><div class="gc-desc">'+p.description+'</div><div class="gc-tweaks">'+tw+'</div><button class="gc-btn" onclick="applyGame(\''+p.id+'\',this)"><span>⚡ OPTIMISER</span></button></div>';
     }).join('');
   });
 }
@@ -727,31 +830,16 @@ function applyGame(id,btn){
   btn.querySelector('span').textContent='⏳...';btn.disabled=true;
   window.pywebview.api.apply_game_profile(id).then(function(r){
     btn.disabled=false;
-    if(r&&r.success){btn.querySelector('span').textContent='✅ Appliqué!';btn.classList.add('done');document.getElementById('gc-'+id).classList.add('applied');showToast('Profil appliqué !','success');setTimeout(function(){btn.querySelector('span').textContent='⚡ OPTIMISER';btn.classList.remove('done');},3000);}
+    if(r&&r.success){btn.querySelector('span').textContent='✅ Appliqué';btn.classList.add('done');document.getElementById('gc-'+id).classList.add('applied');showToast('Profil appliqué !','success');setTimeout(function(){btn.querySelector('span').textContent='⚡ OPTIMISER';btn.classList.remove('done');},3000);}
     else{btn.querySelector('span').textContent='⚡ OPTIMISER';showToast((r&&r.message)||'Erreur','error');}
   });
 }
 
-function doGpu(){
-  ['gpu-btn','hags-btn','prio-btn'].forEach(function(id){var b=document.getElementById(id);b.disabled=true;b.querySelector('span').textContent='⏳...';});
-  window.pywebview.api.optimize_gpu().then(function(r){
-    var labels=['OPTIMISER GPU','ACTIVER HAGS','APPLIQUER'];
-    ['gpu-btn','hags-btn','prio-btn'].forEach(function(id,i){var b=document.getElementById(id);b.disabled=false;if(r&&r.success){b.querySelector('span').textContent='✅ Fait';b.classList.add('done');setTimeout(function(){b.querySelector('span').textContent=labels[i];b.classList.remove('done');},4000);}else b.querySelector('span').textContent=labels[i];});
-    if(r&&r.success){showToast(r.gpu_name+' optimisé !','success');}else showToast('Erreur GPU','error');
-  });
-}
-
-function doClean(){var b=document.getElementById('clean-btn');b.disabled=true;b.querySelector('span').textContent='⏳...';window.pywebview.api.clean_all().then(function(r){b.disabled=false;if(r&&r.success){b.querySelector('span').textContent='✅ Terminé';b.classList.add('done');document.getElementById('clean-r').textContent=r.message;showToast('Nettoyage terminé !','success');setTimeout(function(){b.querySelector('span').textContent='NETTOYER TOUT';b.classList.remove('done');},4000);}else{b.querySelector('span').textContent='NETTOYER TOUT';showToast('Erreur','error');}});}
-function doRam(){var b=document.getElementById('ram-btn');b.disabled=true;b.querySelector('span').textContent='⏳...';window.pywebview.api.clean_ram_only().then(function(){b.disabled=false;b.querySelector('span').textContent='✅ Vidée';b.classList.add('done');document.getElementById('ram-r').textContent='RAM libérée !';showToast('RAM vidée !','success');setTimeout(function(){b.querySelector('span').textContent='VIDER RAM';b.classList.remove('done');},3000);});}
-function doTemp(){var b=document.getElementById('temp-btn');b.disabled=true;b.querySelector('span').textContent='⏳...';window.pywebview.api.clean_all().then(function(r){b.disabled=false;if(r&&r.success){b.querySelector('span').textContent='✅ Supprimé';b.classList.add('done');document.getElementById('temp-r').textContent=r.freed_mb+' MB libérés';showToast(r.freed_mb+' MB libérés !','success');setTimeout(function(){b.querySelector('span').textContent='SUPPRIMER';b.classList.remove('done');},3000);}else b.querySelector('span').textContent='SUPPRIMER';});}
-function doNet(){var b=document.getElementById('net-btn');b.disabled=true;b.querySelector('span').textContent='⏳...';window.pywebview.api.optimize_network().then(function(r){b.disabled=false;if(r&&r.success){b.querySelector('span').textContent='✅ Optimisé';b.classList.add('done');document.getElementById('net-r').textContent=r.message;if(r.ping>0)document.getElementById('n-ping').textContent=r.ping;showToast('Réseau optimisé !','success');setTimeout(function(){b.querySelector('span').textContent='OPTIMISER RÉSEAU';b.classList.remove('done');},4000);}else{b.querySelector('span').textContent='OPTIMISER RÉSEAU';showToast('Erreur','error');}});}
-function doPing(){var b=document.getElementById('ping-btn');b.disabled=true;b.querySelector('span').textContent='⏳...';window.pywebview.api.get_ping().then(function(p){b.disabled=false;b.querySelector('span').textContent='TESTER PING';var m=p>0?p+' ms':'Échec';document.getElementById('ping-r').textContent=m;document.getElementById('n-ping').textContent=p>0?p:'—';showToast('Ping: '+m,p>0?'success':'error');});}
-
+// ── Checkup ──────────────────────────────────────────────────────
 function toggleCU(id,card){
-  var i=_selCU.indexOf(id);
-  var check=card.querySelector('.cu-check');
-  if(i>-1){_selCU.splice(i,1);card.classList.remove('sel');check.textContent='';}
-  else{_selCU.push(id);card.classList.add('sel');check.textContent='✓';}
+  var i=_selCU.indexOf(id),ch=card.querySelector('.cu-check');
+  if(i>-1){_selCU.splice(i,1);card.classList.remove('sel');ch.textContent='';}
+  else{_selCU.push(id);card.classList.add('sel');ch.textContent='✓';}
 }
 
 function doCheckup(){
@@ -760,7 +848,7 @@ function doCheckup(){
   window.pywebview.api.run_checkup(_selCU).then(function(r){
     b.disabled=false;b.querySelector('span').textContent='🩺 LANCER LE CHECK-UP';
     if(r&&r.success){document.getElementById('cu-result').textContent='✓ '+r.message;showToast('Check-up terminé !','success');}
-    else showToast('Erreur check-up','error');
+    else showToast('Erreur','error');
   });
 }
 
@@ -771,10 +859,11 @@ function toggleAuto(){
       if(r&&r.success){_autoOn=true;b.querySelector('span').textContent='ARRÊTER';b.style.background='linear-gradient(135deg,#065f46,#059669)';document.getElementById('auto-status').textContent='✓ Actif — nettoyage toutes les '+iv+' min';showToast('Nettoyage auto activé !','success');}
     });
   }else{
-    window.pywebview.api.stop_auto_clean().then(function(){_autoOn=false;b.querySelector('span').textContent='ACTIVER';b.style.background='';document.getElementById('auto-status').textContent='';showToast('Nettoyage auto arrêté','');});
+    window.pywebview.api.stop_auto_clean().then(function(){_autoOn=false;b.querySelector('span').textContent='ACTIVER';b.style.background='';document.getElementById('auto-status').textContent='';});
   }
 }
 
+// ── Overclock ────────────────────────────────────────────────────
 function loadOCInfo(){
   window.pywebview.api.get_gpu_oc_info().then(function(i){
     if(!i)return;
@@ -787,16 +876,13 @@ function loadOCInfo(){
     if(!presets)return;
     var icons={balanced:'⚖️',performance:'🚀',cool:'❄️'};
     document.getElementById('oc-presets').innerHTML=presets.map(function(p){
-      return '<div class="oc-card" id="oc-'+p.id+'" onclick="selOC(\''+p.id+'\')">'+(icons[p.id]||'⚡')+
-        '<div class="oc-name">'+p.name+'</div><div class="oc-desc">'+p.description+'</div>'+
-        '<div class="oc-power">Power Limit : '+p.power_limit+'% du TDP</div>'+
-        '<button class="oc-btn" onclick="event.stopPropagation();applyOC(\''+p.id+'\')"><span>APPLIQUER</span></button></div>';
+      return '<div class="oc-card" id="oc-'+p.id+'" onclick="selOC(\''+p.id+'\')">'+(icons[p.id]||'⚡')+'<div class="oc-name">'+p.name+'</div><div class="oc-desc">'+p.description+'</div><div class="oc-pw">Power Limit: '+p.power_limit+'% TDP</div><button class="oc-btn" onclick="event.stopPropagation();applyOC(\''+p.id+'\')"><span>APPLIQUER</span></button></div>';
     }).join('');
   });
 }
 
 function selOC(id){document.querySelectorAll('.oc-card').forEach(function(c){c.classList.remove('sel');});document.getElementById('oc-'+id).classList.add('sel');}
-function applyOC(id){_pendingOC=id;window.pywebview.api.get_oc_warning().then(function(r){document.getElementById('oc-modal-text').textContent=r.message;document.getElementById('oc-modal').classList.add('show');});}
+function applyOC(id){_pendingOC=id;window.pywebview.api.get_oc_warning().then(function(r){document.getElementById('oc-modal-d').textContent=r.message;document.getElementById('oc-modal').classList.add('show');});}
 function closeOCModal(){document.getElementById('oc-modal').classList.remove('show');_pendingOC=null;}
 function confirmOC(){
   document.getElementById('oc-modal').classList.remove('show');
@@ -809,13 +895,14 @@ function confirmOC(){
 }
 function resetOC(){window.pywebview.api.reset_oc().then(function(r){if(r&&r.success){showToast('GPU remis par défaut','success');loadOCInfo();}});}
 
+// ── Optimizations ─────────────────────────────────────────────────
 function loadOpts(){
   window.pywebview.api.get_optimizations().then(function(opts){
     if(!opts)return;
     var n=0;opts.forEach(function(o){optStates[o.id]=o.enabled;if(o.enabled)n++;});
     document.getElementById('opt-badge').textContent=n+' ACTIVES';
     document.getElementById('opt-list').innerHTML=opts.map(function(o){
-      return '<div class="opt-item"><div><div class="opt-name">'+o.name+(o.requires_admin?' <span style="font-size:9px;background:rgba(251,191,36,0.08);color:var(--amber);padding:1px 5px;border-radius:4px;letter-spacing:1px;">ADMIN</span>':'')+'</div><div class="opt-desc">'+o.description+'</div></div><div class="toggle '+(o.enabled?'on':'')+'" id="tog-'+o.id+'" onclick="toggleOpt(\''+o.id+'\')"></div></div>';
+      return '<div class="opt-item"><div><div class="on">'+o.name+(o.requires_admin?' <span style="font-size:9px;background:rgba(251,191,36,0.07);color:var(--amber);padding:1px 5px;border-radius:4px;">ADMIN</span>':'')+'</div><div class="od">'+o.description+'</div></div><div class="toggle '+(o.enabled?'on':'')+'" id="tog-'+o.id+'" onclick="toggleOpt(\''+o.id+'\')"></div></div>';
     }).join('');
   });
 }
@@ -828,31 +915,34 @@ function toggleOpt(id){
   });
 }
 
+// ── Boost ────────────────────────────────────────────────────────
 function doBoost(){
-  var b=document.getElementById('boost-btn');b.querySelector('span').textContent='⏳ APPLICATION...';b.disabled=true;
+  var b=document.querySelector('.quick-boost');b.querySelector('span').textContent='⏳ APPLICATION...';b.disabled=true;
   window.pywebview.api.boost_gaming().then(function(r){
     b.disabled=false;
-    if(r&&r.success){b.querySelector('span').textContent='✅ BOOST ACTIF';b.classList.add('running');document.getElementById('boost-result').textContent='✓ '+r.applied+'/'+r.total+' optimisations appliquées';showToast('Boost activé !','success');setTimeout(function(){b.querySelector('span').textContent='⚡ BOOST GAMING';b.classList.remove('running');},5000);}
+    if(r&&r.success){b.querySelector('span').textContent='✅ BOOST ACTIF';document.getElementById('boost-result').textContent='✓ '+r.applied+'/'+r.total+' optimisations appliquées';showToast('Boost activé !','success');setTimeout(function(){b.querySelector('span').textContent='⚡ BOOST GAMING';},5000);}
     else{b.querySelector('span').textContent='⚡ BOOST GAMING';showToast('Erreur','error');}
   });
 }
 
+// ── Processes ────────────────────────────────────────────────────
 function loadProcs(){
   window.pywebview.api.get_processes().then(function(procs){
     var c=document.getElementById('proc-list');
     if(!procs||procs.length===0){c.innerHTML='<div style="color:var(--muted);text-align:center;padding:2rem;">✓ Aucun processus inutile détecté</div>';return;}
-    c.innerHTML=procs.map(function(p){return '<div class="proc-item"><span class="proc-name">'+p.name+'</span><span class="proc-mem">'+p.memory_mb+' MB</span><button class="proc-kill" onclick="killProc(\''+p.name+'\',this)">TERMINER</button></div>';}).join('');
+    c.innerHTML=procs.map(function(p){return '<div class="pi"><span class="pi-name">'+p.name+'</span><span class="pi-mem">'+p.memory_mb+' MB</span><button class="pi-kill" onclick="killProc(\''+p.name+'\',this)">TERMINER</button></div>';}).join('');
   });
 }
 
 function killProc(name,btn){btn.disabled=true;btn.textContent='...';window.pywebview.api.kill_process(name).then(function(ok){if(ok){btn.textContent='TERMINÉ';showToast(name+' terminé.','success');}else{btn.disabled=false;btn.textContent='TERMINER';showToast('Impossible','error');}});}
-function killAll(){document.querySelectorAll('.proc-kill:not(:disabled)').forEach(function(b){killProc(b.closest('.proc-item').querySelector('.proc-name').textContent,b);});}
+function killAll(){document.querySelectorAll('.pi-kill:not(:disabled)').forEach(function(b){killProc(b.closest('.pi').querySelector('.pi-name').textContent,b);});}
 
-function showTab(name,btn){
-  document.querySelectorAll('[id^="tab-"]').forEach(function(t){t.style.display='none';});
-  document.querySelectorAll('.sb-item').forEach(function(b){b.classList.remove('active');});
-  document.getElementById('tab-'+name).style.display='block';
-  btn.classList.add('active');
+// ── Navigation ───────────────────────────────────────────────────
+function showPage(name,btn){
+  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});
+  document.querySelectorAll('.sb-nav-btn').forEach(function(b){b.classList.remove('active');});
+  document.getElementById('page-'+name).classList.add('active');
+  if(btn)btn.classList.add('active');
   if(name==='processes')loadProcs();
   if(name==='games')loadGames();
   if(name==='gpu')loadGpuInfo();
