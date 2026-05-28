@@ -91,7 +91,7 @@ body{background:var(--bg);font-family:'Inter',sans-serif;color:var(--text);overf
 #layout{display:flex;flex:1;overflow:hidden;}
 
 /* ── Sidebar ── */
-#sb{width:218px;background:rgba(7,5,14,0.98);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:.75rem 0;flex-shrink:0;overflow-y:auto;scrollbar-width:thin;scrollbar-color:rgba(109,40,217,0.6) transparent;}
+#sb{width:230px;background:rgba(7,5,14,0.98);border-right:1px solid var(--border);display:flex;flex-direction:column;padding:.75rem 0;flex-shrink:0;overflow-y:auto;scrollbar-width:thin;scrollbar-color:rgba(109,40,217,0.6) transparent;}
 .sb-user{margin:0 10px 1rem;background:rgba(139,92,246,0.06);border:1px solid rgba(139,92,246,0.12);border-radius:14px;padding:12px;}
 .sb-uname{font-family:'Rajdhani',sans-serif;font-size:15px;font-weight:700;color:#fff;margin-bottom:2px;}
 .sb-uplan{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--pl);}
@@ -122,7 +122,7 @@ body{background:var(--bg);font-family:'Inter',sans-serif;color:var(--text);overf
 #content{flex:1;overflow-y:auto;scrollbar-width:thin;scrollbar-color:rgba(109,40,217,0.6) transparent;}
 
 /* ── Pages ── */
-.page{display:none;padding:18px 22px;}
+.page{display:none;padding:24px 28px;}
 .page.active{display:block;}
 .pg-title{font-family:'Rajdhani',sans-serif;font-size:22px;font-weight:700;color:#fff;margin-bottom:3px;}
 .pg-sub{font-size:12px;color:var(--muted);margin-bottom:16px;}
@@ -209,8 +209,8 @@ canvas#chart{width:100%;height:120px;display:block;}
 .opt-tab{flex:1;padding:8px;font-family:'Rajdhani',sans-serif;font-size:11px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:var(--muted);background:transparent;border:none;cursor:pointer;border-radius:9px;transition:all .2s;}
 .opt-tab.active{background:rgba(139,92,246,0.18);color:#fff;}
 .opt-tab:hover:not(.active){color:var(--text);}
-.opt-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
-.opt-card{background:var(--bg3);border:1px solid var(--border);border-radius:14px;padding:14px;transition:all .2s;display:flex;flex-direction:column;}
+.opt-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;}
+.opt-card{background:var(--bg3);border:1px solid var(--border);border-radius:14px;padding:18px;transition:all .2s;display:flex;flex-direction:column;min-height:160px;}
 .opt-card:hover{border-color:rgba(139,92,246,0.28);}
 .opt-card-head{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px;}
 .opt-card-ico{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0;}
@@ -219,7 +219,7 @@ canvas#chart{width:100%;height:120px;display:block;}
 .toggle::after{content:'';position:absolute;width:16px;height:16px;border-radius:50%;background:#4a4065;top:2px;left:2px;transition:all .3s;}
 .toggle.on::after{left:20px;background:#fff;}
 .opt-card-name{font-family:'Rajdhani',sans-serif;font-size:13px;font-weight:700;color:#fff;margin-bottom:4px;}
-.opt-card-desc{font-size:10px;color:var(--muted);line-height:1.5;flex:1;}
+.opt-card-desc{font-size:11px;color:var(--muted);line-height:1.6;flex:1;}
 .opt-card-tag{margin-top:8px;display:inline-block;font-size:8px;letter-spacing:1.5px;text-transform:uppercase;padding:2px 7px;border-radius:6px;}
 
 /* ── Games ── */
@@ -386,7 +386,7 @@ canvas#chart{width:100%;height:120px;display:block;}
     <div id="sb">
       <div class="sb-user">
         <div class="sb-uname" id="sb-uname">—</div>
-        <div class="sb-uplan">Plan PRO</div>
+        
         <div class="sb-ustatus"><div class="sb-dot"></div><div class="sb-stxt">ACTIF</div></div>
       </div>
       <div class="sb-lbl">Principal</div>
@@ -429,7 +429,7 @@ canvas#chart{width:100%;height:120px;display:block;}
         Processus
       </button>
       <div class="sb-foot">
-        <a class="dc-btn" href="https://discord.gg/5genNGtbdZ">
+        <a class="dc-btn" href="https://discord.gg/5genNGtbdZ" target="_blank">
           <div class="dc-ico">
             <svg width="20" height="15" viewBox="0 0 20 15" fill="none"><path d="M16.93 1.24A16.5 16.5 0 0 0 12.86 0c-.19.33-.4.78-.55 1.13a15.3 15.3 0 0 0-4.62 0C7.54.78 7.32.33 7.13 0A16.47 16.47 0 0 0 3.06 1.25C.44 5.2-.27 9.05.08 12.85a16.6 16.6 0 0 0 5.06 2.56c.41-.55.77-1.14 1.08-1.75a10.8 10.8 0 0 1-1.7-.82c.14-.1.28-.21.41-.32a11.84 11.84 0 0 0 10.14 0l.42.32c-.54.32-1.11.59-1.71.82.31.62.67 1.2 1.08 1.75a16.55 16.55 0 0 0 5.07-2.56c.42-4.37-.72-8.18-3.02-11.61ZM6.68 10.52c-1 0-1.82-.92-1.82-2.04s.8-2.04 1.82-2.04c1.01 0 1.83.91 1.82 2.04 0 1.12-.8 2.04-1.82 2.04Zm6.63 0c-1 0-1.82-.92-1.82-2.04s.8-2.04 1.82-2.04c1.01 0 1.83.91 1.82 2.04 0 1.12-.8 2.04-1.82 2.04Z" fill="#5865F2"/></svg>
           </div>
@@ -439,7 +439,7 @@ canvas#chart{width:100%;height:120px;display:block;}
           <div class="sbi-ico" style="background:rgba(248,113,113,0.05)!important;"><svg width="16" height="16" fill="none" stroke="#f87171" stroke-width="1.8" stroke-linecap="round"><path d="M5 2H2v12h3M10 10l4-4-4-4M14 6H7"/></svg></div>
           Déconnecter
         </button>
-        <div class="sb-ver"><span>Nexus Software v1.6</span><div style="width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);animation:pd 2s infinite;"></div></div>
+        <div class="sb-ver"><span>Nexus Software v1.7.4</span><div style="width:6px;height:6px;border-radius:50%;background:var(--green);box-shadow:0 0 6px var(--green);animation:pd 2s infinite;"></div></div>
       </div>
     </div>
 
